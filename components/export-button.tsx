@@ -25,20 +25,22 @@ export function ExportButton() {
     format: string
   ): Promise<string> => {
     return new Promise((resolve) => {
-      const canvas = document.createElement("canvas");
+      setTimeout(() => {
+        const canvas = document.createElement("canvas");
 
-      drawFavicon(canvas, size, {
-        text,
-        fontColor,
-        backgroundColor,
-        selectedFont,
-        fontWeight,
-        fontSize,
-        borderRadius,
-      });
+        drawFavicon(canvas, size, {
+          text,
+          fontColor,
+          backgroundColor,
+          selectedFont,
+          fontWeight,
+          fontSize,
+          borderRadius,
+        });
 
-      const dataUrl = canvas.toDataURL(`image/${format}`);
-      resolve(dataUrl);
+        const dataUrl = canvas.toDataURL(`image/${format}`);
+        resolve(dataUrl);
+      }, 0);
     });
   };
 

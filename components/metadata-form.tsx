@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,11 +18,27 @@ export function MetadataForm() {
   const metadata = useFaviconStore((state) => state.metadata);
   const setMetadata = useFaviconStore((state) => state.setMetadata);
 
+  const [localMetadata, setLocalMetadata] = useState(metadata);
+
+  useEffect(() => {
+    setLocalMetadata(metadata);
+  }, [metadata]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (JSON.stringify(metadata) !== JSON.stringify(localMetadata)) {
+        setMetadata(localMetadata);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [localMetadata, setMetadata, metadata]);
+
   const updateField = (field: keyof MetadataFormData, value: string) => {
-    setMetadata({
-      ...metadata,
+    setLocalMetadata((prev) => ({
+      ...prev,
       [field]: value,
-    });
+    }));
   };
 
   return (
@@ -40,7 +57,7 @@ export function MetadataForm() {
             </Label>
             <Input
               id="appName"
-              value={metadata.appName}
+              value={localMetadata.appName}
               onChange={(e) => updateField("appName", e.target.value)}
               placeholder="Your App"
               className="text-sm"
@@ -56,7 +73,7 @@ export function MetadataForm() {
             </Label>
             <Input
               id="appShortName"
-              value={metadata.appShortName}
+              value={localMetadata.appShortName}
               onChange={(e) => updateField("appShortName", e.target.value)}
               placeholder="App"
               maxLength={12}
@@ -75,7 +92,7 @@ export function MetadataForm() {
           </Label>
           <Textarea
             id="description"
-            value={metadata.description}
+            value={localMetadata.description}
             onChange={(e) => updateField("description", e.target.value)}
             placeholder="A brief description of your app"
             rows={3}
@@ -92,7 +109,7 @@ export function MetadataForm() {
           </Label>
           <Input
             id="author"
-            value={metadata.author}
+            value={localMetadata.author}
             onChange={(e) => updateField("author", e.target.value)}
             placeholder="Your Name or Company"
             className="text-sm"
@@ -108,7 +125,7 @@ export function MetadataForm() {
           </Label>
           <Input
             id="keywords"
-            value={metadata.keywords}
+            value={localMetadata.keywords}
             onChange={(e) => updateField("keywords", e.target.value)}
             placeholder="app, icon, favicon"
             className="text-sm"
@@ -129,12 +146,12 @@ export function MetadataForm() {
             <input
               type="color"
               id="themeColor"
-              value={metadata.themeColor}
+              value={localMetadata.themeColor}
               onChange={(e) => updateField("themeColor", e.target.value)}
               className="w-9 h-9 border border-border cursor-pointer"
             />
             <span className="text-xs font-mono flex-1">
-              {metadata.themeColor}
+              {localMetadata.themeColor}
             </span>
           </div>
           <p className="text-xs text-muted-foreground">

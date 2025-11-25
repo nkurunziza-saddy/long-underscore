@@ -24,7 +24,7 @@ export function useUrlSync() {
     },
     {
       history: "replace",
-      shallow: false,
+      shallow: true,
     }
   );
 
@@ -83,24 +83,27 @@ export function useUrlSync() {
     params.themeColor,
   ]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setParams is stable from nuqs
   useEffect(() => {
-    setParams({
-      text: store.text,
-      fontColor: store.fontColor,
-      backgroundColor: store.backgroundColor,
-      selectedFont: store.selectedFont,
-      fontWeight: store.fontWeight,
-      fontSize: store.fontSize,
-      borderRadius: store.borderRadius,
-      selectedColorFamily: store.selectedColorFamily,
-      appName: store.metadata.appName,
-      appShortName: store.metadata.appShortName,
-      description: store.metadata.description,
-      author: store.metadata.author,
-      keywords: store.metadata.keywords,
-      themeColor: store.metadata.themeColor,
-    });
+    const timer = setTimeout(() => {
+      setParams({
+        text: store.text,
+        fontColor: store.fontColor,
+        backgroundColor: store.backgroundColor,
+        selectedFont: store.selectedFont,
+        fontWeight: store.fontWeight,
+        fontSize: store.fontSize,
+        borderRadius: store.borderRadius,
+        selectedColorFamily: store.selectedColorFamily,
+        appName: store.metadata.appName,
+        appShortName: store.metadata.appShortName,
+        description: store.metadata.description,
+        author: store.metadata.author,
+        keywords: store.metadata.keywords,
+        themeColor: store.metadata.themeColor,
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [
     store.text,
     store.fontColor,
@@ -111,5 +114,6 @@ export function useUrlSync() {
     store.borderRadius,
     store.selectedColorFamily,
     store.metadata,
+    setParams,
   ]);
 }

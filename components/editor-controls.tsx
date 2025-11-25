@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,47 @@ export function EditorControls() {
   const borderRadius = useFaviconStore((state) => state.borderRadius);
   const setBorderRadius = useFaviconStore((state) => state.setBorderRadius);
 
+  const fontWeights = useMemo(() => {
+    return FONTS.find((f) => f.value === selectedFont)?.weight || [];
+  }, [selectedFont]);
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setText(e.target.value.slice(0, 3));
+    },
+    [setText]
+  );
+
+  const handleFontChange = useCallback(
+    (value: string) => {
+      setSelectedFont(value);
+    },
+    [setSelectedFont]
+  );
+
+  const handleWeightChange = useCallback(
+    (value: string) => {
+      setFontWeight(Number(value));
+    },
+    [setFontWeight]
+  );
+
+  const handleFontSizeChange = useCallback(
+    (value: number | readonly number[]) => {
+      const val = Array.isArray(value) ? value[0] : value;
+      setFontSize(val);
+    },
+    [setFontSize]
+  );
+
+  const handleBorderRadiusChange = useCallback(
+    (value: number | readonly number[]) => {
+      const val = Array.isArray(value) ? value[0] : value;
+      setBorderRadius(val);
+    },
+    [setBorderRadius]
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -40,7 +82,7 @@ export function EditorControls() {
           <Input
             id="text"
             value={text}
-            onChange={(e) => setText(e.target.value.slice(0, 3))}
+            onChange={handleTextChange}
             placeholder="S"
             maxLength={3}
           />
@@ -58,7 +100,7 @@ export function EditorControls() {
           </Label>
           <Select
             value={selectedFont}
-            onValueChange={setSelectedFont}
+            onValueChange={handleFontChange}
             items={FONTS.map((font) => ({
               value: font.value,
               label: font.name,
@@ -86,29 +128,25 @@ export function EditorControls() {
           </Label>
           <Select
             value={fontWeight.toString()}
-            onValueChange={(v) => setFontWeight(Number(v))}
-            items={FONTS.find((f) => f.value === selectedFont)?.weight.map(
-              (weight) => ({
-                value: weight.toString(),
-                label:
-                  FONT_WEIGHT_NAMES[weight as keyof typeof FONT_WEIGHT_NAMES] ||
-                  weight,
-              })
-            )}
+            onValueChange={handleWeightChange}
+            items={fontWeights.map((weight) => ({
+              value: weight.toString(),
+              label:
+                FONT_WEIGHT_NAMES[weight as keyof typeof FONT_WEIGHT_NAMES] ||
+                weight.toString(),
+            }))}
           >
             <SelectTrigger id="weight">
               <SelectValue />
             </SelectTrigger>
             <SelectPopup>
-              {FONTS.find((f) => f.value === selectedFont)?.weight.map(
-                (weight) => (
-                  <SelectItem key={weight} value={weight.toString()}>
-                    {FONT_WEIGHT_NAMES[
-                      weight as keyof typeof FONT_WEIGHT_NAMES
-                    ] || weight}
-                  </SelectItem>
-                )
-              )}
+              {fontWeights.map((weight) => (
+                <SelectItem key={weight} value={weight.toString()}>
+                  {FONT_WEIGHT_NAMES[
+                    weight as keyof typeof FONT_WEIGHT_NAMES
+                  ] || weight}
+                </SelectItem>
+              ))}
             </SelectPopup>
           </Select>
         </div>
@@ -123,8 +161,8 @@ export function EditorControls() {
             <span className="text-muted-foreground">100px</span>
           </div>
           <Slider
-            value={fontSize}
-            onValueChange={(v) => setFontSize(Array.isArray(v) ? v[0] : v)}
+            value={[fontSize]}
+            onValueChange={handleFontSizeChange}
             min={20}
             max={100}
             step={1}
@@ -141,8 +179,8 @@ export function EditorControls() {
             <span className="text-muted-foreground">50%</span>
           </div>
           <Slider
-            value={borderRadius}
-            onValueChange={(v) => setBorderRadius(Array.isArray(v) ? v[0] : v)}
+            value={[borderRadius]}
+            onValueChange={handleBorderRadiusChange}
             min={0}
             max={50}
             step={1}
