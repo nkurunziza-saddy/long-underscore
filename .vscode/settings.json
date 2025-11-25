@@ -1,0 +1,8 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.action.useSortedAttributes.biome": "explicit",
+    "source.fixAll.biome": "explicit",
+    "source.addMissingImports.ts": "explicit",
+    "source.removeUnusedImports": "explicit"
+  }
+}

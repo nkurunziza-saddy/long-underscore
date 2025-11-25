@@ -35,8 +35,8 @@ function TooltipPopup({
       >
         <TooltipPrimitive.Popup
           className={cn(
-            "relative flex w-fit origin-(--transform-origin) text-balance rounded-md border bg-popover bg-clip-padding px-2 py-1 text-popover-foreground text-xs shadow-black/5 shadow-md transition-[scale,opacity] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:scale-98 data-starting-style:scale-98 data-ending-style:opacity-0 data-starting-style:opacity-0 data-instant:duration-0 dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
-            className,
+            "relative flex w-fit origin-(--transform-origin) rounded-md border bg-popover bg-clip-padding px-2 py-1 text-xs text-balance text-popover-foreground transition-[scale,opacity] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] before:shadow-sm data-ending-style:scale-98 data-ending-style:opacity-0 data-instant:duration-0 data-starting-style:scale-98 data-starting-style:opacity-0 dark:bg-clip-border dark:shadow-sm dark:shadow-black/24 dark:before:shadow-[0_-1px_--theme(--color-white/8%)]",
+            className
           )}
           data-slot="tooltip-content"
           {...props}
@@ -48,10 +48,4 @@ function TooltipPopup({
   );
 }
 
-export {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipPopup,
-  TooltipPopup as TooltipContent,
-};
+export { TooltipProvider, Tooltip, TooltipTrigger, TooltipPopup };

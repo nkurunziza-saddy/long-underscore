@@ -8,9 +8,8 @@ import {
   LoaderCircleIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const toastManager = Toast.createToastManager();
 
@@ -62,7 +61,7 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
           // Horizontal positioning
           "data-[position*=left]:left-(--toast-inset)",
           "data-[position*=right]:right-(--toast-inset)",
-          "data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2",
+          "data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"
         )}
         data-position={position}
         data-slot="toast-viewport"
@@ -113,7 +112,7 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
                 "data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-100%-var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]",
                 "data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]",
                 "data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-100%-var(--toast-inset)))]",
-                "data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]",
+                "data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]"
               )}
               data-position={position}
               key={toast.id}
@@ -121,8 +120,8 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
                 position.includes("center")
                   ? [isTop ? "up" : "down"]
                   : position.includes("left")
-                    ? ["left", isTop ? "up" : "down"]
-                    : ["right", isTop ? "up" : "down"]
+                  ? ["left", isTop ? "up" : "down"]
+                  : ["right", isTop ? "up" : "down"]
               }
               toast={toast}
             >
