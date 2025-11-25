@@ -154,6 +154,110 @@ export const FONTS = [
   },
   { name: "Righteous", value: "righteous", category: "display", weight: [400] },
   { name: "Pacifico", value: "pacifico", category: "display", weight: [400] },
+
+  // Modern Sans-Serif (Clean & Tech)
+  {
+    name: "Outfit",
+    value: "outfit",
+    category: "sans-serif",
+    weight: [400, 500, 700],
+  },
+  {
+    name: "Plus Jakarta Sans",
+    value: "plus-jakarta-sans",
+    category: "sans-serif",
+    weight: [400, 500, 700],
+  },
+  {
+    name: "Manrope",
+    value: "manrope",
+    category: "sans-serif",
+    weight: [400, 600, 700],
+  },
+  {
+    name: "DM Sans",
+    value: "dm-sans",
+    category: "sans-serif",
+    weight: [400, 500, 700],
+  },
+  {
+    name: "Work Sans",
+    value: "work-sans",
+    category: "sans-serif",
+    weight: [400, 600],
+  },
+
+  // Elegant Serif (Luxury & Editorial)
+  {
+    name: "Cinzel",
+    value: "cinzel",
+    category: "serif",
+    weight: [400, 600, 700],
+  },
+  { name: "Prata", value: "prata", category: "serif", weight: [400] },
+  {
+    name: "Bodoni Moda",
+    value: "bodoni-moda",
+    category: "serif",
+    weight: [400, 700],
+  },
+  {
+    name: "Abril Fatface",
+    value: "abril-fatface",
+    category: "display",
+    weight: [400],
+  },
+
+  // Creative Display (Logos & Headlines)
+  {
+    name: "Alfa Slab One",
+    value: "alfa-slab-one",
+    category: "display",
+    weight: [400],
+  },
+  {
+    name: "Fredoka",
+    value: "fredoka",
+    category: "display",
+    weight: [400, 500, 600, 700],
+  },
+  { name: "Bangers", value: "bangers", category: "display", weight: [400] },
+  { name: "Lobster", value: "lobster", category: "display", weight: [400] },
+
+  // Handwriting & Script (Personal & Signature)
+  {
+    name: "Dancing Script",
+    value: "dancing-script",
+    category: "display",
+    weight: [400, 700],
+  },
+  {
+    name: "Great Vibes",
+    value: "great-vibes",
+    category: "display",
+    weight: [400],
+  },
+  {
+    name: "Sacramento",
+    value: "sacramento",
+    category: "display",
+    weight: [400],
+  },
+  { name: "Satisfy", value: "satisfy", category: "display", weight: [400] },
+
+  // Tech Mono (Coding & Cyber)
+  {
+    name: "Fira Code",
+    value: "fira-code",
+    category: "mono",
+    weight: [400, 600],
+  },
+  {
+    name: "Source Code Pro",
+    value: "source-code-pro",
+    category: "mono",
+    weight: [400, 700],
+  },
 ];
 
 export const FONT_WEIGHT_NAMES: Record<number, string> = {
@@ -194,6 +298,25 @@ export const getFontLink = (fontValue: string, weights: number[]) => {
     "bebas-neue": "Bebas+Neue",
     righteous: "Righteous",
     pacifico: "Pacifico",
+    outfit: "Outfit",
+    "plus-jakarta-sans": "Plus+Jakarta+Sans",
+    manrope: "Manrope",
+    "dm-sans": "DM+Sans",
+    "work-sans": "Work+Sans",
+    cinzel: "Cinzel",
+    prata: "Prata",
+    "bodoni-moda": "Bodoni+Moda",
+    "abril-fatface": "Abril+Fatface",
+    "alfa-slab-one": "Alfa+Slab+One",
+    fredoka: "Fredoka",
+    bangers: "Bangers",
+    lobster: "Lobster",
+    "dancing-script": "Dancing+Script",
+    "great-vibes": "Great+Vibes",
+    sacramento: "Sacramento",
+    satisfy: "Satisfy",
+    "fira-code": "Fira+Code",
+    "source-code-pro": "Source+Code+Pro",
   };
 
   const fontName = fontMap[fontValue];
@@ -232,6 +355,25 @@ export const getCSSFontFamily = (fontValue: string): string => {
     "bebas-neue": "'Bebas Neue', display",
     righteous: "'Righteous', display",
     pacifico: "'Pacifico', display",
+    outfit: "'Outfit', sans-serif",
+    "plus-jakarta-sans": "'Plus Jakarta Sans', sans-serif",
+    manrope: "'Manrope', sans-serif",
+    "dm-sans": "'DM Sans', sans-serif",
+    "work-sans": "'Work Sans', sans-serif",
+    cinzel: "'Cinzel', serif",
+    prata: "'Prata', serif",
+    "bodoni-moda": "'Bodoni Moda', serif",
+    "abril-fatface": "'Abril Fatface', display",
+    "alfa-slab-one": "'Alfa Slab One', display",
+    fredoka: "'Fredoka', display",
+    bangers: "'Bangers', display",
+    lobster: "'Lobster', display",
+    "dancing-script": "'Dancing Script', cursive",
+    "great-vibes": "'Great Vibes', cursive",
+    sacramento: "'Sacramento', cursive",
+    satisfy: "'Satisfy', cursive",
+    "fira-code": "'Fira Code', monospace",
+    "source-code-pro": "'Source Code Pro', monospace",
   };
 
   return fontMap[fontValue] || "'Inter', sans-serif";
