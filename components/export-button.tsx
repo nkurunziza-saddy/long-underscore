@@ -20,7 +20,7 @@ export function ExportButton({
   metadata,
   backgroundColor,
   fontColor,
-  text = "AF",
+  text = "S",
 }: ExportButtonProps) {
   const allSizes = [16, 32, 48, 64, 128, 180, 192, 256, 512];
   const formats = ["png", "ico"];

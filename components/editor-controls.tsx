@@ -49,7 +49,7 @@ export function EditorControls({
             id="text"
             value={text}
             onChange={(e) => onTextChange(e.target.value.slice(0, 3))}
-            placeholder="AF"
+            placeholder="S"
             maxLength={3}
           />
           <p className="text-xs text-muted-foreground mt-1.5">

@@ -34,7 +34,7 @@ export function ElegantFaviconGenerator() {
     setParams,
   ] = useQueryStates(
     {
-      text: parseAsString.withDefault("AF"),
+      text: parseAsString.withDefault("S"),
       fontColor: parseAsString.withDefault("#065f46"),
       backgroundColor: parseAsString.withDefault("#ffffff"),
       selectedFont: parseAsString.withDefault("poppins"),
