@@ -12,6 +12,7 @@ interface FaviconState {
   selectedColorFamily: string;
 
   metadata: MetadataFormData;
+  includePwa: boolean;
 
   setText: (text: string) => void;
   setFontColor: (color: string) => void;
@@ -22,6 +23,7 @@ interface FaviconState {
   setBorderRadius: (radius: number) => void;
   setSelectedColorFamily: (family: string) => void;
   setMetadata: (metadata: MetadataFormData) => void;
+  setIncludePwa: (include: boolean) => void;
 }
 
 export const useFaviconStore = create<FaviconState>((set) => ({
@@ -42,6 +44,8 @@ export const useFaviconStore = create<FaviconState>((set) => ({
     themeColor: "#065f46",
   },
 
+  includePwa: true,
+
   setText: (text) => set({ text }),
   setFontColor: (fontColor) => set({ fontColor }),
   setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
@@ -51,4 +55,5 @@ export const useFaviconStore = create<FaviconState>((set) => ({
   setBorderRadius: (borderRadius) => set({ borderRadius }),
   setSelectedColorFamily: (selectedColorFamily) => set({ selectedColorFamily }),
   setMetadata: (metadata) => set({ metadata }),
+  setIncludePwa: (includePwa) => set({ includePwa }),
 }));

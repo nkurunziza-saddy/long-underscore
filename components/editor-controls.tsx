@@ -176,13 +176,13 @@ export function EditorControls() {
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">0%</span>
             <span className="font-medium">{borderRadius}%</span>
-            <span className="text-muted-foreground">50%</span>
+            <span className="text-muted-foreground">100%</span>
           </div>
           <Slider
             value={[borderRadius]}
             onValueChange={handleBorderRadiusChange}
             min={0}
-            max={50}
+            max={100}
             step={1}
           />
         </div>

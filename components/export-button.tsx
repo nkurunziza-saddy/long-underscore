@@ -16,6 +16,7 @@ export function ExportButton() {
   const fontWeight = useFaviconStore((state) => state.fontWeight);
   const fontSize = useFaviconStore((state) => state.fontSize);
   const borderRadius = useFaviconStore((state) => state.borderRadius);
+  const includePwa = useFaviconStore((state) => state.includePwa);
 
   const allSizes = [16, 32, 48, 64, 128, 180, 192, 256, 512];
   const formats = ["png", "ico"];
@@ -183,7 +184,7 @@ ${
     : "Add keywords in your HTML meta tags for better SEO.\n"
 }
 
-Generated with ICo - Favicon Generator
+Generated with Underscore - Favicon Generator
 `;
   };
 
@@ -214,11 +215,13 @@ Generated with ICo - Favicon Generator
 </svg>`;
     zip.file("favicon.svg", svgContent);
 
-    zip.file("manifest.json", generateManifest());
-    zip.file("browserconfig.xml", generateBrowserConfig());
-    zip.file("robots.txt", generateRobotsTxt());
-    zip.file("favicon.html", generateHtmlCode());
-    zip.file("README.md", generateReadme());
+    if (includePwa) {
+      zip.file("manifest.json", generateManifest());
+      zip.file("browserconfig.xml", generateBrowserConfig());
+      zip.file("robots.txt", generateRobotsTxt());
+      zip.file("favicon.html", generateHtmlCode());
+      zip.file("README.md", generateReadme());
+    }
 
     const content = await zip.generateAsync({
       type: "blob",

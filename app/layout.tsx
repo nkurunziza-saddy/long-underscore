@@ -14,6 +14,7 @@ import type React from "react";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 
 const inter = Inter({
@@ -81,34 +82,34 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FaviconForge - Favicon & Logo Generator",
+  title: "_",
   description:
     "Create professional favicons and logos from text, emojis, or images. Complete export package with PWA support and all formats.",
   keywords: "favicon, logo, generator, PWA, icon, web design, branding",
-  authors: [{ name: "FaviconForge" }],
-  creator: "FaviconForge",
-  publisher: "FaviconForge",
+  authors: [{ name: "Nkurunziza Saddy" }],
+  creator: "Nkurunziza Saddy",
+  publisher: "Nkurunziza Saddy",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://faviconforge.com"),
+  metadataBase: new URL("https://longunderscore.vercel.app"),
   openGraph: {
-    title: "FaviconForge - Favicon & Logo Generator",
+    title: "_",
     description:
       "Create professional favicons and logos with complete PWA support.",
-    url: "https://faviconforge.com",
-    siteName: "FaviconForge",
+    url: "https://longunderscore.vercel.app",
+    siteName: "",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FaviconForge - Favicon & Logo Generator",
+    title: "_",
     description:
       "Create professional favicons and logos with complete PWA support.",
-    creator: "@faviconforge",
+    creator: "@nk_saddy",
   },
   robots: {
     index: true,
@@ -131,12 +132,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${playfair.variable} ${merriweather.variable} ${lora.variable} ${spaceMono.variable} antialiased`}
+      className={` ${inter.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${playfair.variable} ${merriweather.variable} ${lora.variable} ${spaceMono.variable} antialiased`}
     >
       <body className="font-sans">
         <Suspense fallback={null}>
           <NuqsAdapter>
-            <ToastProvider>{children}</ToastProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ToastProvider>{children}</ToastProvider>
+            </ThemeProvider>
           </NuqsAdapter>
         </Suspense>
       </body>

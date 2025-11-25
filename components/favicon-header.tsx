@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useCopyToClipboard } from "@/hooks/use-copy";
 import { ExportButton } from "./export-button";
+import { SettingsDropdown } from "./settings-dropdown";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 
 export function FaviconHeader() {
@@ -14,7 +15,7 @@ export function FaviconHeader() {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <h1 className="hidden text-lg font-medium sm:block">ICo</h1>
+          <h1 className="hidden text-lg font-medium sm:block">_</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -38,6 +39,7 @@ export function FaviconHeader() {
             </TooltipPopup>
           </Tooltip>
 
+          <SettingsDropdown />
           <ExportButton />
         </div>
       </div>

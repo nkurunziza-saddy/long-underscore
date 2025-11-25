@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://longunderscore.vercel.app/sitemap.xml
