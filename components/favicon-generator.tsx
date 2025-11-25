@@ -1,5 +1,6 @@
 "use client";
 
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { premiumColorPalettes } from "@/lib/color-palletes";
 import { getCSSFontFamily } from "@/lib/fonts";
@@ -12,24 +13,71 @@ import { MetadataForm, type MetadataFormData } from "./metadata-form";
 import { ShadeSelectorPanel } from "./shade-selector-panel";
 
 export function ElegantFaviconGenerator() {
-  const [text, setText] = useState("AF");
-  const [selectedColorFamily, setSelectedColorFamily] =
-    useState<keyof typeof premiumColorPalettes>("emerald");
-  const [fontColor, setFontColor] = useState("#065f46");
-  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
-  const [selectedFont, setSelectedFont] = useState("poppins");
-  const [fontWeight, setFontWeight] = useState(700);
-  const [fontSize, setFontSize] = useState(48);
-  const [borderRadius, setBorderRadius] = useState(8);
   const [copied, setCopied] = useState(false);
-  const [metadata, setMetadata] = useState<MetadataFormData>({
-    appName: "My App",
-    appShortName: "App",
-    description: "A progressive web application",
-    author: "",
-    keywords: "",
-    themeColor: "#065f46",
-  });
+  const [
+    {
+      text,
+      fontColor,
+      backgroundColor,
+      selectedFont,
+      fontWeight,
+      fontSize,
+      borderRadius,
+      selectedColorFamily,
+      appName,
+      appShortName,
+      description,
+      author,
+      keywords,
+      themeColor,
+    },
+    setParams,
+  ] = useQueryStates(
+    {
+      text: parseAsString.withDefault("AF"),
+      fontColor: parseAsString.withDefault("#065f46"),
+      backgroundColor: parseAsString.withDefault("#ffffff"),
+      selectedFont: parseAsString.withDefault("poppins"),
+      fontWeight: parseAsInteger.withDefault(700),
+      fontSize: parseAsInteger.withDefault(48),
+      borderRadius: parseAsInteger.withDefault(8),
+      selectedColorFamily: parseAsString.withDefault("emerald"),
+      appName: parseAsString.withDefault("My App"),
+      appShortName: parseAsString.withDefault("App"),
+      description: parseAsString.withDefault("A progressive web application"),
+      author: parseAsString.withDefault(""),
+      keywords: parseAsString.withDefault(""),
+      themeColor: parseAsString.withDefault("#065f46"),
+    },
+    {
+      history: "replace",
+      shallow: false,
+    }
+  );
+
+  const metadata: MetadataFormData = useMemo(
+    () => ({
+      appName,
+      appShortName,
+      description,
+      author,
+      keywords,
+      themeColor,
+    }),
+    [appName, appShortName, description, author, keywords, themeColor]
+  );
+
+  const setText = (value: string) => setParams({ text: value });
+  const setFontColor = (value: string) => setParams({ fontColor: value });
+  const setBackgroundColor = (value: string) =>
+    setParams({ backgroundColor: value });
+  const setSelectedFont = (value: string) => setParams({ selectedFont: value });
+  const setFontWeight = (value: number) => setParams({ fontWeight: value });
+  const setFontSize = (value: number) => setParams({ fontSize: value });
+  const setBorderRadius = (value: number) => setParams({ borderRadius: value });
+  const setSelectedColorFamily = (value: keyof typeof premiumColorPalettes) =>
+    setParams({ selectedColorFamily: value as string });
+  const setMetadata = (value: MetadataFormData) => setParams(value);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewLargeRef = useRef<HTMLCanvasElement>(null);
@@ -37,7 +85,10 @@ export function ElegantFaviconGenerator() {
   const previewSmallRef = useRef<HTMLCanvasElement>(null);
 
   const backgroundShades = useMemo(
-    () => premiumColorPalettes[selectedColorFamily],
+    () =>
+      premiumColorPalettes[
+        selectedColorFamily as keyof typeof premiumColorPalettes
+      ],
     [selectedColorFamily]
   );
 
@@ -98,22 +149,8 @@ export function ElegantFaviconGenerator() {
     updateCanvases();
   }, [drawFavicon]);
 
-  const generateShareUrl = () => {
-    const params = new URLSearchParams({
-      text,
-      fontColor,
-      backgroundColor,
-      font: selectedFont,
-      weight: fontWeight.toString(),
-      size: fontSize.toString(),
-      radius: borderRadius.toString(),
-    });
-    return `${window.location.origin}/preview?${params.toString()}`;
-  };
-
   const copyShareUrl = () => {
-    const url = generateShareUrl();
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -148,7 +185,9 @@ export function ElegantFaviconGenerator() {
           </div>
 
           <ColorPickerPanel
-            selectedColorFamily={selectedColorFamily}
+            selectedColorFamily={
+              selectedColorFamily as keyof typeof premiumColorPalettes
+            }
             onColorFamilyChange={setSelectedColorFamily}
           />
 

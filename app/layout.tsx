@@ -12,6 +12,7 @@ import {
 } from "next/font/google";
 import type React from "react";
 import "./globals.css";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
 
@@ -80,7 +81,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FaviconForge - Premium Favicon & Logo Generator",
+  title: "FaviconForge - Favicon & Logo Generator",
   description:
     "Create professional favicons and logos from text, emojis, or images. Complete export package with PWA support and all formats.",
   keywords: "favicon, logo, generator, PWA, icon, web design, branding",
@@ -94,9 +95,9 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://faviconforge.com"),
   openGraph: {
-    title: "FaviconForge - Premium Favicon & Logo Generator",
+    title: "FaviconForge - Favicon & Logo Generator",
     description:
-      "Create professional favicons and logos with premium features and complete PWA support.",
+      "Create professional favicons and logos with complete PWA support.",
     url: "https://faviconforge.com",
     siteName: "FaviconForge",
     locale: "en_US",
@@ -104,9 +105,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FaviconForge - Premium Favicon & Logo Generator",
+    title: "FaviconForge - Favicon & Logo Generator",
     description:
-      "Create professional favicons and logos with premium features and complete PWA support.",
+      "Create professional favicons and logos with complete PWA support.",
     creator: "@faviconforge",
   },
   robots: {
@@ -134,7 +135,9 @@ export default function RootLayout({
     >
       <body className="font-sans">
         <Suspense fallback={null}>
-          <ToastProvider>{children}</ToastProvider>
+          <NuqsAdapter>
+            <ToastProvider>{children}</ToastProvider>
+          </NuqsAdapter>
         </Suspense>
       </body>
     </html>
