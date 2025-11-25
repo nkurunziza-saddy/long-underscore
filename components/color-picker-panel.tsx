@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
-import { premiumColorPalettes } from "@/lib/color-palletes";
+import { colorPalettes } from "@/lib/color-palletes";
+import { useFaviconStore } from "@/stores/favicon-store";
 
-interface ColorPickerPanelProps {
-  selectedColorFamily: keyof typeof premiumColorPalettes;
-  onColorFamilyChange: (family: keyof typeof premiumColorPalettes) => void;
-}
+export function ColorPickerPanel() {
+  const selectedColorFamily = useFaviconStore(
+    (state) => state.selectedColorFamily
+  );
+  const setSelectedColorFamily = useFaviconStore(
+    (state) => state.setSelectedColorFamily
+  );
 
-export function ColorPickerPanel({
-  selectedColorFamily,
-  onColorFamilyChange,
-}: ColorPickerPanelProps) {
-  const colorFamilies = Object.keys(premiumColorPalettes);
+  const colorFamilies = Object.keys(colorPalettes);
 
   return (
     <Card>
@@ -23,9 +23,7 @@ export function ColorPickerPanel({
           {colorFamilies.map((family) => (
             <Button
               key={family}
-              onClick={() =>
-                onColorFamilyChange(family as keyof typeof premiumColorPalettes)
-              }
+              onClick={() => setSelectedColorFamily(family)}
               variant={selectedColorFamily === family ? "default" : "outline"}
               size="sm"
               className="text-xs"

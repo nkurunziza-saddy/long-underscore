@@ -1,134 +1,41 @@
 "use client";
 
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { premiumColorPalettes } from "@/lib/color-palletes";
-import { getCSSFontFamily } from "@/lib/fonts";
+import { useEffect, useRef } from "react";
+import { useUrlSync } from "@/hooks/use-url-sync";
+import { colorPalettes } from "@/lib/color-palletes";
+import { drawFavicon } from "@/lib/draw-favicon";
+import { useFaviconStore } from "@/stores/favicon-store";
 import { ColorPickerPanel } from "./color-picker-panel";
 import { EditorControls } from "./editor-controls";
-import { ExportButton } from "./export-button";
 import { FaviconHeader } from "./favicon-header";
 import { FaviconPreviewPanel } from "./favicon-preview-panel";
-import { MetadataForm, type MetadataFormData } from "./metadata-form";
+import { MetadataForm } from "./metadata-form";
 import { ShadeSelectorPanel } from "./shade-selector-panel";
 
-export function ElegantFaviconGenerator() {
-  const [copied, setCopied] = useState(false);
-  const [
-    {
-      text,
-      fontColor,
-      backgroundColor,
-      selectedFont,
-      fontWeight,
-      fontSize,
-      borderRadius,
-      selectedColorFamily,
-      appName,
-      appShortName,
-      description,
-      author,
-      keywords,
-      themeColor,
-    },
-    setParams,
-  ] = useQueryStates(
-    {
-      text: parseAsString.withDefault("S"),
-      fontColor: parseAsString.withDefault("#065f46"),
-      backgroundColor: parseAsString.withDefault("#ffffff"),
-      selectedFont: parseAsString.withDefault("poppins"),
-      fontWeight: parseAsInteger.withDefault(700),
-      fontSize: parseAsInteger.withDefault(48),
-      borderRadius: parseAsInteger.withDefault(8),
-      selectedColorFamily: parseAsString.withDefault("emerald"),
-      appName: parseAsString.withDefault("My App"),
-      appShortName: parseAsString.withDefault("App"),
-      description: parseAsString.withDefault("A progressive web application"),
-      author: parseAsString.withDefault(""),
-      keywords: parseAsString.withDefault(""),
-      themeColor: parseAsString.withDefault("#065f46"),
-    },
-    {
-      history: "replace",
-      shallow: false,
-    }
-  );
+export function FaviconGenerator() {
+  useUrlSync();
 
-  const metadata: MetadataFormData = useMemo(
-    () => ({
-      appName,
-      appShortName,
-      description,
-      author,
-      keywords,
-      themeColor,
-    }),
-    [appName, appShortName, description, author, keywords, themeColor]
+  const text = useFaviconStore((state) => state.text);
+  const fontColor = useFaviconStore((state) => state.fontColor);
+  const backgroundColor = useFaviconStore((state) => state.backgroundColor);
+  const selectedFont = useFaviconStore((state) => state.selectedFont);
+  const fontWeight = useFaviconStore((state) => state.fontWeight);
+  const fontSize = useFaviconStore((state) => state.fontSize);
+  const borderRadius = useFaviconStore((state) => state.borderRadius);
+  const selectedColorFamily = useFaviconStore(
+    (state) => state.selectedColorFamily
   );
-
-  const setText = (value: string) => setParams({ text: value });
-  const setFontColor = (value: string) => setParams({ fontColor: value });
-  const setBackgroundColor = (value: string) =>
-    setParams({ backgroundColor: value });
-  const setSelectedFont = (value: string) => setParams({ selectedFont: value });
-  const setFontWeight = (value: number) => setParams({ fontWeight: value });
-  const setFontSize = (value: number) => setParams({ fontSize: value });
-  const setBorderRadius = (value: number) => setParams({ borderRadius: value });
-  const setSelectedColorFamily = (value: keyof typeof premiumColorPalettes) =>
-    setParams({ selectedColorFamily: value as string });
-  const setMetadata = (value: MetadataFormData) => setParams(value);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewLargeRef = useRef<HTMLCanvasElement>(null);
   const previewMediumRef = useRef<HTMLCanvasElement>(null);
   const previewSmallRef = useRef<HTMLCanvasElement>(null);
 
-  const backgroundShades = useMemo(
-    () =>
-      premiumColorPalettes[
-        selectedColorFamily as keyof typeof premiumColorPalettes
-      ],
-    [selectedColorFamily]
-  );
+  const backgroundShades =
+    colorPalettes[selectedColorFamily as keyof typeof colorPalettes];
 
-  const drawFavicon = useCallback(
-    (canvas: HTMLCanvasElement, size: number) => {
-      const ctx = canvas.getContext("2d", {
-        alpha: true,
-        willReadFrequently: false,
-      });
-      if (!ctx) return;
-
-      canvas.width = size;
-      canvas.height = size;
-      ctx.clearRect(0, 0, size, size);
-
-      ctx.fillStyle = backgroundColor;
-      const radius = (borderRadius / 100) * (size / 2);
-
-      ctx.beginPath();
-      ctx.moveTo(radius, 0);
-      ctx.lineTo(size - radius, 0);
-      ctx.arcTo(size, 0, size, radius, radius);
-      ctx.lineTo(size, size - radius);
-      ctx.arcTo(size, size, size - radius, size, radius);
-      ctx.lineTo(radius, size);
-      ctx.arcTo(0, size, 0, size - radius, radius);
-      ctx.lineTo(0, radius);
-      ctx.arcTo(0, 0, radius, 0, radius);
-      ctx.fill();
-
-      ctx.fillStyle = fontColor;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      const scaledFontSize = Math.round((fontSize * size) / 256);
-      ctx.font = `${fontWeight} ${scaledFontSize}px ${getCSSFontFamily(
-        selectedFont
-      )}`;
-      ctx.fillText(text.toUpperCase().slice(0, 2), size / 2, size / 2);
-    },
-    [
+  useEffect(() => {
+    const config = {
       text,
       fontColor,
       backgroundColor,
@@ -136,84 +43,49 @@ export function ElegantFaviconGenerator() {
       fontWeight,
       fontSize,
       borderRadius,
-    ]
-  );
-
-  useEffect(() => {
-    const updateCanvases = () => {
-      if (canvasRef.current) drawFavicon(canvasRef.current, 512);
-      if (previewLargeRef.current) drawFavicon(previewLargeRef.current, 256);
-      if (previewMediumRef.current) drawFavicon(previewMediumRef.current, 128);
-      if (previewSmallRef.current) drawFavicon(previewSmallRef.current, 32);
     };
-    updateCanvases();
-  }, [drawFavicon]);
 
-  const copyShareUrl = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    const updateCanvases = () => {
+      if (canvasRef.current) drawFavicon(canvasRef.current, 512, config);
+      if (previewLargeRef.current)
+        drawFavicon(previewLargeRef.current, 256, config);
+      if (previewMediumRef.current)
+        drawFavicon(previewMediumRef.current, 128, config);
+      if (previewSmallRef.current)
+        drawFavicon(previewSmallRef.current, 32, config);
+    };
+
+    updateCanvases();
+  }, [
+    text,
+    fontColor,
+    backgroundColor,
+    selectedFont,
+    fontWeight,
+    fontSize,
+    borderRadius,
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
-      <FaviconHeader onShare={copyShareUrl} copied={copied}>
-        <ExportButton
-          canvasRef={canvasRef}
-          metadata={metadata}
-          backgroundColor={backgroundColor}
-          fontColor={fontColor}
-          text={text}
-        />
-      </FaviconHeader>
+      <FaviconHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
           <div className="">
-            <EditorControls
-              text={text}
-              onTextChange={setText}
-              selectedFont={selectedFont}
-              onFontChange={setSelectedFont}
-              fontWeight={fontWeight}
-              onFontWeightChange={setFontWeight}
-              fontSize={fontSize}
-              onFontSizeChange={setFontSize}
-              borderRadius={borderRadius}
-              onBorderRadiusChange={setBorderRadius}
-            />
+            <EditorControls />
           </div>
 
-          <ColorPickerPanel
-            selectedColorFamily={
-              selectedColorFamily as keyof typeof premiumColorPalettes
-            }
-            onColorFamilyChange={setSelectedColorFamily}
-          />
+          <ColorPickerPanel />
 
           <div className="space-y-4">
-            <ShadeSelectorPanel
-              fontColor={fontColor}
-              onFontColorChange={setFontColor}
-              backgroundColor={backgroundColor}
-              onBackgroundColorChange={setBackgroundColor}
-              type="text"
-              backgroundShades={backgroundShades}
-            />
-
-            <ShadeSelectorPanel
-              fontColor={fontColor}
-              onFontColorChange={setFontColor}
-              backgroundColor={backgroundColor}
-              onBackgroundColorChange={setBackgroundColor}
-              type="background"
-              backgroundShades={backgroundShades}
-            />
+            <ShadeSelectorPanel type="text" shades={backgroundShades} />
+            <ShadeSelectorPanel type="background" shades={backgroundShades} />
           </div>
 
           <div className="space-y-4">
             <FaviconPreviewPanel previewLargeRef={previewLargeRef} />
-            <MetadataForm metadata={metadata} onMetadataChange={setMetadata} />
+            <MetadataForm />
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import { ElegantFaviconGenerator } from "@/components/favicon-generator";
+import { FaviconGenerator } from "@/components/favicon-generator";
 
 export default function Home() {
-  return <ElegantFaviconGenerator />;
+  return <FaviconGenerator />;
 }

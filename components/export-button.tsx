@@ -2,26 +2,21 @@
 
 import JSZip from "jszip";
 import { Download } from "lucide-react";
-import type { RefObject } from "react";
 import { Button } from "@/components/ui/button";
-import type { MetadataFormData } from "./metadata-form";
+import { drawFavicon } from "@/lib/draw-favicon";
+import { useFaviconStore } from "@/stores/favicon-store";
 import { toastManager } from "./ui/toast";
 
-interface ExportButtonProps {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
-  metadata: MetadataFormData;
-  backgroundColor: string;
-  fontColor: string;
-  text?: string;
-}
+export function ExportButton() {
+  const metadata = useFaviconStore((state) => state.metadata);
+  const backgroundColor = useFaviconStore((state) => state.backgroundColor);
+  const fontColor = useFaviconStore((state) => state.fontColor);
+  const text = useFaviconStore((state) => state.text);
+  const selectedFont = useFaviconStore((state) => state.selectedFont);
+  const fontWeight = useFaviconStore((state) => state.fontWeight);
+  const fontSize = useFaviconStore((state) => state.fontSize);
+  const borderRadius = useFaviconStore((state) => state.borderRadius);
 
-export function ExportButton({
-  canvasRef,
-  metadata,
-  backgroundColor,
-  fontColor,
-  text = "S",
-}: ExportButtonProps) {
   const allSizes = [16, 32, 48, 64, 128, 180, 192, 256, 512];
   const formats = ["png", "ico"];
 
@@ -30,29 +25,20 @@ export function ExportButton({
     format: string
   ): Promise<string> => {
     return new Promise((resolve) => {
-      if (!canvasRef.current) {
-        resolve("");
-        return;
-      }
-
       const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        resolve("");
-        return;
-      }
 
-      canvas.width = size;
-      canvas.height = size;
+      drawFavicon(canvas, size, {
+        text,
+        fontColor,
+        backgroundColor,
+        selectedFont,
+        fontWeight,
+        fontSize,
+        borderRadius,
+      });
 
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, size, size);
-        const dataUrl = canvas.toDataURL(`image/${format}`);
-        resolve(dataUrl);
-      };
-      img.onerror = () => resolve("");
-      img.src = canvasRef.current.toDataURL("image/png");
+      const dataUrl = canvas.toDataURL(`image/${format}`);
+      resolve(dataUrl);
     });
   };
 
@@ -271,8 +257,8 @@ Generated with ICo - Favicon Generator
   };
 
   return (
-    <Button onClick={handleExport} size="sm" className="gap-1.5">
-      <Download className="w-4 h-4" />
+    <Button onClick={handleExport} size="sm">
+      <Download className="inline sm:hidden" />
       <span className="hidden sm:inline">Export</span>
     </Button>
   );

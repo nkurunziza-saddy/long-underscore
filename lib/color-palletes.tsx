@@ -1,4 +1,4 @@
-export const premiumColorPalettes = {
+export const colorPalettes = {
   emerald: [
     "#ecfdf5",
     "#d1fae5",
@@ -277,6 +277,5 @@ export const premiumColorPalettes = {
   ],
 };
 
-export const selectedColorShades = (
-  colorFamily: keyof typeof premiumColorPalettes
-) => premiumColorPalettes[colorFamily];
+export const selectedColorShades = (colorFamily: keyof typeof colorPalettes) =>
+  colorPalettes[colorFamily];

@@ -1,4 +1,4 @@
-export const premiumFonts = [
+export const FONTS = [
   // Sans-serif fonts (Modern & Clean)
   {
     name: "Inter",
@@ -156,7 +156,7 @@ export const premiumFonts = [
   { name: "Pacifico", value: "pacifico", category: "display", weight: [400] },
 ];
 
-export const fontWeightNames: Record<number, string> = {
+export const FONT_WEIGHT_NAMES: Record<number, string> = {
   300: "Light",
   400: "Regular",
   500: "Medium",

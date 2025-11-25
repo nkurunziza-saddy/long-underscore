@@ -2,6 +2,7 @@ import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useFaviconStore } from "@/stores/favicon-store";
 
 export interface MetadataFormData {
   appName: string;
@@ -12,17 +13,12 @@ export interface MetadataFormData {
   themeColor: string;
 }
 
-interface MetadataFormProps {
-  metadata: MetadataFormData;
-  onMetadataChange: (metadata: MetadataFormData) => void;
-}
+export function MetadataForm() {
+  const metadata = useFaviconStore((state) => state.metadata);
+  const setMetadata = useFaviconStore((state) => state.setMetadata);
 
-export function MetadataForm({
-  metadata,
-  onMetadataChange,
-}: MetadataFormProps) {
   const updateField = (field: keyof MetadataFormData, value: string) => {
-    onMetadataChange({
+    setMetadata({
       ...metadata,
       [field]: value,
     });
