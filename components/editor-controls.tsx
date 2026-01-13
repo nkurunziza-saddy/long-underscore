@@ -37,15 +37,15 @@ export function EditorControls() {
   );
 
   const handleFontChange = useCallback(
-    (value: string) => {
-      setSelectedFont(value);
+    (value: string | null) => {
+      if (value) setSelectedFont(value);
     },
     [setSelectedFont]
   );
 
   const handleWeightChange = useCallback(
-    (value: string) => {
-      setFontWeight(Number(value));
+    (value: string | null) => {
+      if (value) setFontWeight(Number(value));
     },
     [setFontWeight]
   );
