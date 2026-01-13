@@ -27,14 +27,10 @@ export const drawFavicon = (
   });
   if (!ctx) return;
 
-  // 1. Setup Canvas
-  // Set dimensions and clear any previous content
   canvas.width = size;
   canvas.height = size;
   ctx.clearRect(0, 0, size, size);
 
-  // 2. Draw Background
-  // Create a rounded rectangle path for the background
   ctx.fillStyle = backgroundColor;
   const radius = (borderRadius / 100) * (size / 2);
 
@@ -50,33 +46,19 @@ export const drawFavicon = (
   ctx.arcTo(0, 0, radius, 0, radius);
   ctx.fill();
 
-  // 3. Draw Text
-  // Configure text rendering
   ctx.fillStyle = fontColor;
   ctx.textAlign = "center";
-  // We use 'alphabetic' baseline to have full control over vertical positioning
-  // based on the actual text metrics
+
   ctx.textBaseline = "alphabetic";
 
-  // Calculate font size as a percentage of the canvas size
-  // This ensures the text scales perfectly with the favicon size
   const scaledFontSize = Math.round((fontSize / 100) * size);
 
   ctx.font = `${fontWeight} ${scaledFontSize}px ${getCSSFontFamily(
     selectedFont
   )}`;
 
-  const textContent = text.toUpperCase().slice(0, 2);
-
-  // 4. Center Text
-  // Measure the actual rendered text dimensions to center it perfectly
+  const textContent = text;
   const metrics = ctx.measureText(textContent);
-
-  // actualBoundingBoxAscent: distance from baseline to top of text
-  // actualBoundingBoxDescent: distance from baseline to bottom of text
-  // To center vertically, we need to shift the baseline down by half the difference
-  // between ascent and descent.
-  // Formula: y = center + (ascent - descent) / 2
   const ascent = metrics.actualBoundingBoxAscent;
   const descent = metrics.actualBoundingBoxDescent;
   const verticalOffset = (ascent - descent) / 2;

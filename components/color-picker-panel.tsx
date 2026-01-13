@@ -5,10 +5,10 @@ import { useFaviconStore } from "@/stores/favicon-store";
 
 export function ColorPickerPanel() {
   const selectedColorFamily = useFaviconStore(
-    (state) => state.selectedColorFamily
+    (state) => state.selectedColorFamily,
   );
   const setSelectedColorFamily = useFaviconStore(
-    (state) => state.setSelectedColorFamily
+    (state) => state.setSelectedColorFamily,
   );
 
   const colorFamilies = Object.keys(colorPalettes);

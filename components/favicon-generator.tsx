@@ -1,5 +1,6 @@
 "use client";
 
+import { FileCode, Type } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useUrlSync } from "@/hooks/use-url-sync";
 import { colorPalettes } from "@/lib/color-palletes";
@@ -11,10 +12,15 @@ import { FaviconHeader } from "./favicon-header";
 import { FaviconPreviewPanel } from "./favicon-preview-panel";
 import { MetadataForm } from "./metadata-form";
 import { ShadeSelectorPanel } from "./shade-selector-panel";
+import { SvgImportPanel } from "./svg-import-panel";
+import { SvgPreviewPanel } from "./svg-preview-panel";
+import { Tabs, TabsList, TabsPanel, TabsTab } from "./ui/tabs";
 
 export function FaviconGenerator() {
   useUrlSync();
 
+  const mode = useFaviconStore((state) => state.mode);
+  const setMode = useFaviconStore((state) => state.setMode);
   const text = useFaviconStore((state) => state.text);
   const fontColor = useFaviconStore((state) => state.fontColor);
   const backgroundColor = useFaviconStore((state) => state.backgroundColor);
@@ -35,6 +41,8 @@ export function FaviconGenerator() {
     colorPalettes[selectedColorFamily as keyof typeof colorPalettes];
 
   useEffect(() => {
+    if (mode !== "text") return;
+
     const config = {
       text,
       fontColor,
@@ -57,6 +65,7 @@ export function FaviconGenerator() {
 
     updateCanvases();
   }, [
+    mode,
     text,
     fontColor,
     backgroundColor,
@@ -71,23 +80,61 @@ export function FaviconGenerator() {
       <FaviconHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
-          <div className="">
-            <EditorControls />
-          </div>
+        <Tabs
+          value={mode}
+          onValueChange={(value) => setMode(value as "text" | "svg")}
+          className="mb-6"
+        >
+          <TabsList>
+            <TabsTab value="text">
+              <Type className="h-4 w-4" />
+              Text Generator
+            </TabsTab>
+            <TabsTab value="svg">
+              <FileCode className="h-4 w-4" />
+              SVG Import
+            </TabsTab>
+          </TabsList>
 
-          <ColorPickerPanel />
+          <TabsPanel value="text">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start mt-6">
+              <div>
+                <EditorControls />
+              </div>
 
-          <div className="space-y-4">
-            <ShadeSelectorPanel type="text" shades={backgroundShades} />
-            <ShadeSelectorPanel type="background" shades={backgroundShades} />
-          </div>
+              <ColorPickerPanel />
 
-          <div className="space-y-4">
-            <FaviconPreviewPanel previewLargeRef={previewLargeRef} />
-            <MetadataForm />
-          </div>
-        </div>
+              <div className="space-y-4">
+                <ShadeSelectorPanel type="text" shades={backgroundShades} />
+                <ShadeSelectorPanel
+                  type="background"
+                  shades={backgroundShades}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <FaviconPreviewPanel previewLargeRef={previewLargeRef} />
+                <MetadataForm />
+              </div>
+            </div>
+          </TabsPanel>
+
+          <TabsPanel value="svg">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start mt-6">
+              <div className="lg:col-span-1">
+                <SvgImportPanel />
+              </div>
+
+              <div className="lg:col-span-1">
+                <SvgPreviewPanel />
+              </div>
+
+              <div className="lg:col-span-1">
+                <MetadataForm />
+              </div>
+            </div>
+          </TabsPanel>
+        </Tabs>
       </div>
 
       <canvas ref={canvasRef} className="hidden" />

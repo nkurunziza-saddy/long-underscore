@@ -31,7 +31,7 @@ export function EditorControls() {
 
   const handleTextChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setText(e.target.value.slice(0, 3));
+      setText(e.target.value);
     },
     [setText]
   );
@@ -84,10 +84,10 @@ export function EditorControls() {
             value={text}
             onChange={handleTextChange}
             placeholder="S"
-            maxLength={3}
+            // maxLength={3}
           />
           <p className="text-xs text-muted-foreground mt-1.5">
-            Max 3 characters
+            Shorter text works best for favicons
           </p>
         </div>
 

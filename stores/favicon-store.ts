@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import type { MetadataFormData } from "@/components/metadata-form";
 
+export type GeneratorMode = "text" | "svg";
+
 interface FaviconState {
+  mode: GeneratorMode;
   text: string;
   fontColor: string;
   backgroundColor: string;
@@ -13,6 +16,8 @@ interface FaviconState {
 
   metadata: MetadataFormData;
   includePwa: boolean;
+
+  setMode: (mode: GeneratorMode) => void;
 
   setText: (text: string) => void;
   setFontColor: (color: string) => void;
@@ -27,6 +32,7 @@ interface FaviconState {
 }
 
 export const useFaviconStore = create<FaviconState>((set) => ({
+  mode: "text",
   text: "S",
   fontColor: "#065f46",
   backgroundColor: "#ffffff",
@@ -45,6 +51,8 @@ export const useFaviconStore = create<FaviconState>((set) => ({
   },
 
   includePwa: true,
+
+  setMode: (mode) => set({ mode }),
 
   setText: (text) => set({ text }),
   setFontColor: (fontColor) => set({ fontColor }),

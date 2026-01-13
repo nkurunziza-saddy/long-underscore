@@ -13,7 +13,7 @@ export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
   const setFontColor = useFaviconStore((state) => state.setFontColor);
   const backgroundColor = useFaviconStore((state) => state.backgroundColor);
   const setBackgroundColor = useFaviconStore(
-    (state) => state.setBackgroundColor
+    (state) => state.setBackgroundColor,
   );
 
   const isTextMode = type === "text";

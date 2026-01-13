@@ -63,7 +63,7 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
             "data-[position*=bottom]:bottom-(--toast-inset)",
             "data-[position*=left]:left-(--toast-inset)",
             "data-[position*=right]:right-(--toast-inset)",
-            "data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"
+            "data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2",
           )}
           data-position={position}
           data-slot="toast-viewport"
@@ -100,15 +100,15 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
                 "data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-100%-var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]",
                 "data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]",
                 "data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-100%-var(--toast-inset)))]",
-                "data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]"
+                "data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]",
               )}
               data-position={position}
               swipeDirection={
                 position.includes("center")
                   ? [isTop ? "up" : "down"]
                   : position.includes("left")
-                  ? ["left", isTop ? "up" : "down"]
-                  : ["right", isTop ? "up" : "down"]
+                    ? ["left", isTop ? "up" : "down"]
+                    : ["right", isTop ? "up" : "down"]
               }
               toast={toast}
             >
@@ -131,7 +131,7 @@ function ToastList({ position = "bottom-right" }: { position: ToastPosition }) {
                 "z-50 w-fit select-none rounded-md border bg-popover bg-clip-padding px-2 py-1 text-xs text-popover-foreground",
                 "data-starting-style:opacity-0 data-starting-style:scale-95",
                 "data-ending-style:opacity-0 data-ending-style:scale-95",
-                "transition-all duration-200 ease-out"
+                "transition-all duration-200 ease-out",
               )}
             >
               <ToastContent toast={toast} />

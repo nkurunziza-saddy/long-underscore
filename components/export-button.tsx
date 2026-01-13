@@ -4,10 +4,14 @@ import JSZip from "jszip";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { drawFavicon } from "@/lib/draw-favicon";
+import { generateSvg } from "@/lib/generate-svg";
+import { svgToPngDataUrl } from "@/lib/svg-to-canvas";
 import { useFaviconStore } from "@/stores/favicon-store";
+import { useSvgImportStore } from "@/stores/svg-import-store";
 import { toastManager } from "./ui/toast";
 
 export function ExportButton() {
+  const mode = useFaviconStore((state) => state.mode);
   const metadata = useFaviconStore((state) => state.metadata);
   const backgroundColor = useFaviconStore((state) => state.backgroundColor);
   const fontColor = useFaviconStore((state) => state.fontColor);
@@ -18,10 +22,14 @@ export function ExportButton() {
   const borderRadius = useFaviconStore((state) => state.borderRadius);
   const includePwa = useFaviconStore((state) => state.includePwa);
 
+  const svgContent = useSvgImportStore((state) => state.svgContent);
+  const isValidSvg = useSvgImportStore((state) => state.isValid);
+
   const allSizes = [16, 32, 48, 64, 128, 180, 192, 256, 512];
+  const macOsSizes = [16, 32, 64, 128, 256, 512, 1024]; // For .iconset
   const formats = ["png", "ico"];
 
-  const generateFaviconAtSize = async (
+  const generateTextFaviconAtSize = async (
     size: number,
     format: string
   ): Promise<string> => {
@@ -43,6 +51,16 @@ export function ExportButton() {
         resolve(dataUrl);
       }, 0);
     });
+  };
+
+  const generateSvgFaviconAtSize = async (
+    size: number,
+    format: string
+  ): Promise<string> => {
+    if (format === "ico") {
+      return svgToPngDataUrl(svgContent, size);
+    }
+    return svgToPngDataUrl(svgContent, size);
   };
 
   const generateManifest = () => {
@@ -145,6 +163,21 @@ Generated on: ${new Date().toLocaleDateString()}
 - favicon-512x512.png (Retina displays)
 - apple-touch-icon.png (iOS home screen)
 
+### macOS Icons (AppIcon.iconset/)
+The \`AppIcon.iconset\` folder contains all required sizes for macOS app icons:
+- icon_16x16.png, icon_16x16@2x.png
+- icon_32x32.png, icon_32x32@2x.png
+- icon_64x64.png, icon_64x64@2x.png
+- icon_128x128.png, icon_128x128@2x.png
+- icon_256x256.png, icon_256x256@2x.png
+- icon_512x512.png, icon_512x512@2x.png
+- icon_1024x1024.png
+
+**To convert to .icns (macOS only):**
+\`\`\`bash
+iconutil -c icns AppIcon.iconset
+\`\`\`
+
 ### Configuration Files
 - manifest.json (PWA manifest for app installation)
 - browserconfig.xml (Microsoft tile configuration)
@@ -175,6 +208,7 @@ ${metadata.author ? `- Author: ${metadata.author}` : ""}
 ✅ iOS Safari, Android Chrome
 ✅ Progressive Web App (PWA) support
 ✅ Microsoft Tiles
+✅ macOS App Icons (.iconset ready)
 
 ## SEO Optimization
 
@@ -190,6 +224,12 @@ Generated with Underscore - Favicon Generator
 
   const exportFaviconPackage = async (): Promise<string> => {
     const zip = new JSZip();
+
+    // Use different generation method based on mode
+    const generateFaviconAtSize =
+      mode === "svg" && isValidSvg
+        ? generateSvgFaviconAtSize
+        : generateTextFaviconAtSize;
 
     for (const size of allSizes) {
       for (const format of formats) {
@@ -207,13 +247,45 @@ Generated with Underscore - Favicon Generator
       }
     }
 
-    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <rect width="256" height="256" fill="${backgroundColor}" rx="20"/>
-  <text x="128" y="165" font-family="Arial, sans-serif" font-size="120" font-weight="700" fill="${fontColor}" text-anchor="middle">${text
-      .toUpperCase()
-      .slice(0, 2)}</text>
-</svg>`;
-    zip.file("favicon.svg", svgContent);
+    if (mode === "svg" && isValidSvg) {
+      zip.file("favicon.svg", svgContent);
+    } else {
+      const generatedSvg = generateSvg({
+        text,
+        fontColor,
+        backgroundColor,
+        selectedFont,
+        fontWeight,
+        fontSize,
+        borderRadius,
+        size: 256,
+      });
+      zip.file("favicon.svg", generatedSvg);
+    }
+
+    const iconsetFolder = zip.folder("AppIcon.iconset");
+    if (iconsetFolder) {
+      for (const size of macOsSizes) {
+        const dataUrl1x = await generateFaviconAtSize(size, "png");
+        if (dataUrl1x) {
+          const base64Data = dataUrl1x.split(",")[1];
+          iconsetFolder.file(`icon_${size}x${size}.png`, base64Data, {
+            base64: true,
+          });
+        }
+
+        const retinaSize = size * 2;
+        if (retinaSize <= 1024) {
+          const dataUrl2x = await generateFaviconAtSize(retinaSize, "png");
+          if (dataUrl2x) {
+            const base64Data = dataUrl2x.split(",")[1];
+            iconsetFolder.file(`icon_${size}x${size}@2x.png`, base64Data, {
+              base64: true,
+            });
+          }
+        }
+      }
+    }
 
     if (includePwa) {
       zip.file("manifest.json", generateManifest());
@@ -245,6 +317,15 @@ Generated with Underscore - Favicon Generator
   };
 
   const handleExport = () => {
+    if (mode === "svg" && !isValidSvg) {
+      toastManager.add({
+        type: "error",
+        title: "No valid SVG",
+        description: "Please import a valid SVG file first",
+      });
+      return;
+    }
+
     toastManager.promise(exportFaviconPackage(), {
       loading: {
         title: "Generating package...",
@@ -262,9 +343,11 @@ Generated with Underscore - Favicon Generator
   };
 
   return (
-    <Button onClick={handleExport} size="sm">
-      <Download className="inline sm:hidden" />
-      <span className="hidden sm:inline">Export</span>
-    </Button>
+    <div className="flex items-center gap-1">
+      <Button onClick={handleExport} size="sm">
+        <Download className="inline sm:hidden" />
+        <span className="hidden sm:inline">Export</span>
+      </Button>
+    </div>
   );
 }

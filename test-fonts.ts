@@ -13,7 +13,7 @@ async function testFonts() {
         console.log(`✅ ${font.name}: OK`);
       } else {
         console.error(
-          `❌ ${font.name}: Failed with status ${res.status} (${url})`
+          `❌ ${font.name}: Failed with status ${res.status} (${url})`,
         );
       }
     } catch (e) {

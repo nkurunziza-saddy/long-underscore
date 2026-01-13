@@ -25,7 +25,7 @@ export function useUrlSync() {
     {
       history: "replace",
       shallow: true,
-    }
+    },
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Store setters are stable
