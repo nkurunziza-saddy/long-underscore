@@ -12,6 +12,7 @@ import {
 } from "next/font/google";
 import type React from "react";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -145,6 +146,7 @@ export default function RootLayout({
             >
               <ToastProvider>{children}</ToastProvider>
             </ThemeProvider>
+            <Analytics />
           </NuqsAdapter>
         </Suspense>
       </body>
