@@ -90,10 +90,10 @@ function PopoverDescription({
 
 export {
   Popover,
-  PopoverTrigger,
+  PopoverClose,
+  PopoverDescription,
   PopoverPopup,
   PopoverPopup as PopoverContent,
   PopoverTitle,
-  PopoverDescription,
-  PopoverClose,
+  PopoverTrigger,
 };

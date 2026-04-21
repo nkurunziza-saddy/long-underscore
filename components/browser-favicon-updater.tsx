@@ -2,23 +2,25 @@
 
 import { useEffect, useRef } from "react";
 import { drawFavicon } from "@/lib/draw-favicon";
+import { svgToPngDataUrl } from "@/lib/svg-to-canvas";
 import { useFaviconStore } from "@/stores/favicon-store";
 import { useSvgImportStore } from "@/stores/svg-import-store";
-import { svgToPngDataUrl } from "@/lib/svg-to-canvas";
 
 export function BrowserFaviconUpdater() {
   const mode = useFaviconStore((state) => state.mode);
   const text = useFaviconStore((state) => state.text);
   const iconName = useFaviconStore((state) => state.iconName);
   const iconNodes = useFaviconStore((state) => state.iconNodes);
-  const backgroundType = useFaviconStore((state) => state.backgroundType);
-  const gradientColors = useFaviconStore((state) => state.gradientColors);
-  const fontColor = useFaviconStore((state) => state.fontColor);
-  const backgroundColor = useFaviconStore((state) => state.backgroundColor);
-  const selectedFont = useFaviconStore((state) => state.selectedFont);
-  const fontWeight = useFaviconStore((state) => state.fontWeight);
-  const fontSize = useFaviconStore((state) => state.fontSize);
-  const borderRadius = useFaviconStore((state) => state.borderRadius);
+  const settings = useFaviconStore((state) => state.settings[mode]);
+  const {
+    fontColor,
+    backgroundColor,
+    selectedFont,
+    fontWeight,
+    fontSize,
+    borderRadius,
+    transparentBackground,
+  } = settings;
 
   const svgContent = useSvgImportStore((state) => state.svgContent);
   const isValidSvg = useSvgImportStore((state) => state.isValid);
@@ -40,9 +42,9 @@ export function BrowserFaviconUpdater() {
           iconName,
           iconNodes,
           fontColor,
-          backgroundColor,
-          backgroundType,
-          gradientColors,
+          backgroundColor: transparentBackground
+            ? "transparent"
+            : backgroundColor,
           selectedFont,
           fontWeight,
           fontSize,
@@ -55,7 +57,7 @@ export function BrowserFaviconUpdater() {
 
       if (dataUrl) {
         let link = document.querySelector(
-          "link[rel~='icon']"
+          "link[rel~='icon']",
         ) as HTMLLinkElement;
         if (!link) {
           link = document.createElement("link");
@@ -75,12 +77,11 @@ export function BrowserFaviconUpdater() {
     iconNodes,
     fontColor,
     backgroundColor,
-    backgroundType,
-    gradientColors,
     selectedFont,
     fontWeight,
     fontSize,
     borderRadius,
+    transparentBackground,
     svgContent,
     isValidSvg,
   ]);

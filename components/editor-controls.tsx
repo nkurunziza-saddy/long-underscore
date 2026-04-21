@@ -15,15 +15,13 @@ import { useFaviconStore } from "@/stores/favicon-store";
 
 export function EditorControls() {
   const mode = useFaviconStore((state) => state.mode);
+  const settings = useFaviconStore((state) => state.settings[mode]);
+  const { selectedFont, fontWeight, fontSize, borderRadius } = settings;
   const text = useFaviconStore((state) => state.text);
   const setText = useFaviconStore((state) => state.setText);
-  const selectedFont = useFaviconStore((state) => state.selectedFont);
   const setSelectedFont = useFaviconStore((state) => state.setSelectedFont);
-  const fontWeight = useFaviconStore((state) => state.fontWeight);
   const setFontWeight = useFaviconStore((state) => state.setFontWeight);
-  const fontSize = useFaviconStore((state) => state.fontSize);
   const setFontSize = useFaviconStore((state) => state.setFontSize);
-  const borderRadius = useFaviconStore((state) => state.borderRadius);
   const setBorderRadius = useFaviconStore((state) => state.setBorderRadius);
 
   const fontWeights = useMemo(() => {
@@ -34,21 +32,21 @@ export function EditorControls() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setText(e.target.value);
     },
-    [setText]
+    [setText],
   );
 
   const handleFontChange = useCallback(
     (value: string | null) => {
       if (value) setSelectedFont(value);
     },
-    [setSelectedFont]
+    [setSelectedFont],
   );
 
   const handleWeightChange = useCallback(
     (value: string | null) => {
       if (value) setFontWeight(Number(value));
     },
-    [setFontWeight]
+    [setFontWeight],
   );
 
   const handleFontSizeChange = useCallback(
@@ -56,7 +54,7 @@ export function EditorControls() {
       const val = Array.isArray(value) ? value[0] : value;
       setFontSize(val);
     },
-    [setFontSize]
+    [setFontSize],
   );
 
   const handleBorderRadiusChange = useCallback(
@@ -64,7 +62,7 @@ export function EditorControls() {
       const val = Array.isArray(value) ? value[0] : value;
       setBorderRadius(val);
     },
-    [setBorderRadius]
+    [setBorderRadius],
   );
 
   return (
@@ -135,8 +133,9 @@ export function EditorControls() {
                 items={fontWeights.map((weight) => ({
                   value: weight.toString(),
                   label:
-                    FONT_WEIGHT_NAMES[weight as keyof typeof FONT_WEIGHT_NAMES] ||
-                    weight.toString(),
+                    FONT_WEIGHT_NAMES[
+                      weight as keyof typeof FONT_WEIGHT_NAMES
+                    ] || weight.toString(),
                 }))}
               >
                 <SelectTrigger id="weight">

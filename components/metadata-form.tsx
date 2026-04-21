@@ -12,6 +12,10 @@ export interface MetadataFormData {
   author: string;
   keywords: string;
   themeColor: string;
+  twitterHandle: string;
+  ogType: string;
+  siteUrl: string;
+  siteLanguage: string;
 }
 
 export function MetadataForm() {
@@ -130,9 +134,6 @@ export function MetadataForm() {
             placeholder="app, icon, favicon"
             className="text-sm"
           />
-          <p className="text-xs text-muted-foreground">
-            Comma-separated keywords for SEO
-          </p>
         </div>
 
         <div className="space-y-2">
@@ -154,9 +155,74 @@ export function MetadataForm() {
               {localMetadata.themeColor}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Browser theme color for mobile devices
-          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+          <div className="space-y-2">
+            <Label
+              htmlFor="twitterHandle"
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+            >
+              Twitter Handle
+            </Label>
+            <Input
+              id="twitterHandle"
+              value={localMetadata.twitterHandle}
+              onChange={(e) => updateField("twitterHandle", e.target.value)}
+              placeholder="@username"
+              className="text-sm"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="ogType"
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+            >
+              OG Type
+            </Label>
+            <Input
+              id="ogType"
+              value={localMetadata.ogType}
+              onChange={(e) => updateField("ogType", e.target.value)}
+              placeholder="website"
+              className="text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label
+              htmlFor="siteUrl"
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+            >
+              Site URL
+            </Label>
+            <Input
+              id="siteUrl"
+              value={localMetadata.siteUrl}
+              onChange={(e) => updateField("siteUrl", e.target.value)}
+              placeholder="https://example.com"
+              className="text-sm"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="siteLanguage"
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+            >
+              Language
+            </Label>
+            <Input
+              id="siteLanguage"
+              value={localMetadata.siteLanguage}
+              onChange={(e) => updateField("siteLanguage", e.target.value)}
+              placeholder="en_US"
+              className="text-sm"
+            />
+          </div>
         </div>
       </CardPanel>
     </Card>

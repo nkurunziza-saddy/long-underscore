@@ -1,6 +1,8 @@
 import { Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getContrastColor } from "@/lib/contrast";
 import { cn } from "@/lib/utils";
@@ -12,15 +14,18 @@ interface ShadeSelectorPanelProps {
 }
 
 export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
-  const fontColor = useFaviconStore((state) => state.fontColor);
+  const mode = useFaviconStore((state) => state.mode);
+  const settings = useFaviconStore((state) => state.settings[mode]);
+
+  const { fontColor, backgroundColor, transparentBackground } = settings;
+
   const setFontColor = useFaviconStore((state) => state.setFontColor);
-  const backgroundColor = useFaviconStore((state) => state.backgroundColor);
   const setBackgroundColor = useFaviconStore(
     (state) => state.setBackgroundColor,
   );
-
-  const backgroundType = useFaviconStore((state) => state.backgroundType);
-  const gradientColors = useFaviconStore((state) => state.gradientColors);
+  const setTransparentBackground = useFaviconStore(
+    (state) => state.setTransparentBackground,
+  );
 
   const isTextMode = type === "text";
   const color = isTextMode ? fontColor : backgroundColor;
@@ -28,8 +33,12 @@ export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
 
   const handleAutoContrast = () => {
     if (isTextMode) {
-      const bg = backgroundType === "gradient" ? gradientColors : backgroundColor;
-      setFontColor(getContrastColor(bg));
+      if (transparentBackground) {
+        setFontColor("#000000");
+      } else {
+        // Pass either the color string or array if we somehow have one (fallback)
+        setFontColor(getContrastColor(backgroundColor as any));
+      }
     }
   };
 
@@ -37,21 +46,45 @@ export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{isTextMode ? "Text Color" : "Background Color"}</CardTitle>
-          {isTextMode && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleAutoContrast}
-              title="Auto contrast fix"
-            >
-              <Wand2 />
-              Auto Fix
-            </Button>
-          )}
+          <CardTitle>
+            {isTextMode ? "Text Color" : "Background Color"}
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            {!isTextMode && (mode === "text" || mode === "icon") && (
+              <div className="flex items-center gap-2 mr-2 border-r pr-4">
+                <Checkbox
+                  id="transparent-bg"
+                  checked={transparentBackground}
+                  onCheckedChange={(checked) =>
+                    setTransparentBackground(!!checked)
+                  }
+                />
+                <Label htmlFor="transparent-bg" className="text-xs">
+                  Transparent
+                </Label>
+              </div>
+            )}
+            {isTextMode && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleAutoContrast}
+                title="Auto contrast fix"
+                className="h-8 px-2 text-xs"
+              >
+                <Wand2 className="h-3.5 w-3.5 mr-1" />
+                Auto Fix
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
-      <CardPanel className="space-y-4">
+      <CardPanel
+        className={cn("space-y-4 transition-opacity", {
+          "opacity-50 pointer-events-none":
+            !isTextMode && transparentBackground,
+        })}
+      >
         <div className="grid grid-cols-5 gap-2">
           {shades.map((shade, index) => (
             <button
@@ -74,17 +107,22 @@ export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
             htmlFor={`custom-${type}`}
             className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
           >
-            Custom Color
+            Custom Color / CSS Gradient
           </Label>
           <div className="flex items-center gap-2 bg-muted/50 p-2 border">
             <input
               type="color"
+              className="w-9 h-9 border border-border cursor-pointer shrink-0"
+              value={color.startsWith("#") ? color : "#000000"}
+              onChange={(e) => setColor(e.target.value)}
+            />
+            <Input
               id={`custom-${type}`}
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="w-9 h-9 border border-border cursor-pointer"
+              placeholder="#hex or linear-gradient(...)"
+              className="text-xs font-mono h-9"
             />
-            <span className="text-xs font-mono flex-1">{color}</span>
           </div>
         </div>
       </CardPanel>

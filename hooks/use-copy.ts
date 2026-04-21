@@ -44,7 +44,7 @@ export const useCopyToClipboard = ({
       }
 
       setTimeout(() => setIsCopied(false), timeout);
-    } catch (error) {
+    } catch (_error) {
       toastManager.add({
         type: "error",
         title: "Failed",

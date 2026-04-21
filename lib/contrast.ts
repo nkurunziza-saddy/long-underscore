@@ -2,9 +2,9 @@
  * Calculates the relative luminance of a color
  */
 export function getLuminance(hex: string): number {
-  let r = Number.parseInt(hex.slice(1, 3), 16) / 255;
-  let g = Number.parseInt(hex.slice(3, 5), 16) / 255;
-  let b = Number.parseInt(hex.slice(5, 7), 16) / 255;
+  const r = Number.parseInt(hex.slice(1, 3), 16) / 255;
+  const g = Number.parseInt(hex.slice(3, 5), 16) / 255;
+  const b = Number.parseInt(hex.slice(5, 7), 16) / 255;
 
   const a = [r, g, b].map((v) => {
     return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -42,9 +42,15 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
     const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
     }
     h /= 6;
   }
@@ -90,14 +96,17 @@ function hslToHex(h: number, s: number, l: number): string {
 }
 
 /**
- * An intelligent auto-fix that returns a high-contrast color 
+ * An intelligent auto-fix that returns a high-contrast color
  * that is stylistically related to the background.
  */
-export function getContrastColor(background: string | [string, string]): string {
+export function getContrastColor(
+  background: string | [string, string],
+): string {
   const bgHex = Array.isArray(background) ? background[0] : background;
+  // biome-ignore lint/correctness/noUnusedVariables: 'l' is extracted but not used
   const { h, s, l } = hexToHsl(bgHex);
-  
-  const avgLuminance = Array.isArray(background) 
+
+  const avgLuminance = Array.isArray(background)
     ? (getLuminance(background[0]) + getLuminance(background[1])) / 2
     : getLuminance(bgHex);
 
@@ -108,8 +117,8 @@ export function getContrastColor(background: string | [string, string]): string 
     const targetS = s < 10 ? s : Math.max(s, 20);
     const targetL = 10; // Very dark
     return hslToHex(h, targetS, targetL);
-  } 
-  
+  }
+
   // If background is dark, return a very light version
   const targetS = s < 10 ? s : Math.max(s, 15);
   const targetL = 95; // Very light

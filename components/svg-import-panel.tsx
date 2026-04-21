@@ -21,7 +21,7 @@ export function SvgImportPanel() {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setSvgFromCode(e.target.value);
     },
-    [setSvgFromCode]
+    [setSvgFromCode],
   );
 
   const handleFileChange = useCallback(
@@ -31,7 +31,7 @@ export function SvgImportPanel() {
         await setSvgFromFile(file);
       }
     },
-    [setSvgFromFile]
+    [setSvgFromFile],
   );
 
   const handleDrop = useCallback(
@@ -42,14 +42,14 @@ export function SvgImportPanel() {
         await setSvgFromFile(file);
       }
     },
-    [setSvgFromFile]
+    [setSvgFromFile],
   );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent<HTMLButtonElement>) => {
       e.preventDefault();
     },
-    []
+    [],
   );
 
   const handleClear = useCallback(() => {

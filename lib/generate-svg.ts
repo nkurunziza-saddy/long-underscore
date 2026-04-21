@@ -1,15 +1,13 @@
-import { FONTS, getCSSFontFamily, getFontLink } from "./fonts";
 import { ICONS } from "./draw-favicon";
+import { FONTS, getCSSFontFamily, getFontLink } from "./fonts";
 
 export interface SvgConfig {
-  mode?: "text" | "icon" | "svg";
+  mode?: "text" | "icon" | "svg" | "og";
   text: string;
   iconName?: string;
   iconNodes?: any[] | null;
   fontColor: string;
   backgroundColor: string;
-  backgroundType?: "solid" | "gradient";
-  gradientColors?: [string, string];
   selectedFont: string;
   fontWeight: number;
   fontSize: number;
@@ -25,8 +23,6 @@ export function generateSvg(config: SvgConfig): string {
     iconNodes = null,
     fontColor,
     backgroundColor,
-    backgroundType = "solid",
-    gradientColors = ["#000000", "#ffffff"],
     selectedFont,
     fontWeight,
     fontSize,
@@ -50,14 +46,17 @@ export function generateSvg(config: SvgConfig): string {
   let backgroundDef = "";
   let backgroundFill = backgroundColor;
 
-  if (backgroundType === "gradient") {
-    const gradId = "bg-gradient";
-    backgroundDef = `
-    <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:${gradientColors[0]};stop-opacity:1" />
-      <stop offset="100%" style="stop-color:${gradientColors[1]};stop-opacity:1" />
-    </linearGradient>`;
-    backgroundFill = `url(#${gradId})`;
+  if (backgroundColor.includes("gradient")) {
+    const matches = backgroundColor.match(/#[a-fA-F0-9]{3,6}|rgba?\([^)]+\)/g);
+    if (matches && matches.length >= 2) {
+      const gradId = "bg-gradient";
+      backgroundDef = `
+      <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:${matches[0]};stop-opacity:1" />
+        <stop offset="100%" style="stop-color:${matches[matches.length - 1]};stop-opacity:1" />
+      </linearGradient>`;
+      backgroundFill = `url(#${gradId})`;
+    }
   }
 
   let content = "";
@@ -82,7 +81,8 @@ export function generateSvg(config: SvgConfig): string {
       const translate = (size - iconSize) / 2;
 
       const elements = nodes
-        .map(([tag, attrs]: any) => {
+        .map((node) => {
+          const [tag, attrs] = node as [string, Record<string, string>];
           const attrStr = Object.entries(attrs)
             .map(([k, v]) => `${k}="${v}"`)
             .join(" ");

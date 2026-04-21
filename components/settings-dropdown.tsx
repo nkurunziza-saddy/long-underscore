@@ -26,6 +26,8 @@ export function SettingsDropdown() {
   const { theme, setTheme } = useTheme();
   const includePwa = useFaviconStore((state) => state.includePwa);
   const setIncludePwa = useFaviconStore((state) => state.setIncludePwa);
+  const includeOgImage = useFaviconStore((state) => state.includeOgImage);
+  const setIncludeOgImage = useFaviconStore((state) => state.setIncludeOgImage);
 
   const resetToDefaults = () => {
     router.push(pathname);
@@ -58,7 +60,21 @@ export function SettingsDropdown() {
           >
             Include PWA Assets
           </MenuCheckboxItem>
+          <MenuCheckboxItem
+            checked={includeOgImage}
+            onCheckedChange={setIncludeOgImage}
+          >
+            Include OG Image
+          </MenuCheckboxItem>
         </MenuGroup>
+        <MenuSeparator />
+        <div className="px-3 py-2">
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <span className="font-semibold text-primary">Note:</span> You can
+            generate either a Text, Icon, or SVG favicon. The active tab's
+            design will be used in the export package.
+          </p>
+        </div>
         <MenuSeparator />
         <MenuGroup>
           <MenuItem

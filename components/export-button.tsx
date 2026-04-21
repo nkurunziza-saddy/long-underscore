@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { drawFavicon } from "@/lib/draw-favicon";
+import { drawOg } from "@/lib/draw-og";
 import { generateSvg } from "@/lib/generate-svg";
 import { svgToPngDataUrl } from "@/lib/svg-to-canvas";
 import { useFaviconStore } from "@/stores/favicon-store";
@@ -13,18 +14,25 @@ import { toastManager } from "./ui/toast";
 export function ExportButton() {
   const mode = useFaviconStore((state) => state.mode);
   const metadata = useFaviconStore((state) => state.metadata);
-  const backgroundColor = useFaviconStore((state) => state.backgroundColor);
-  const backgroundType = useFaviconStore((state) => state.backgroundType);
-  const gradientColors = useFaviconStore((state) => state.gradientColors);
-  const fontColor = useFaviconStore((state) => state.fontColor);
+  const settings = useFaviconStore((state) => state.settings[mode]);
+  const {
+    backgroundColor,
+    fontColor,
+    selectedFont,
+    fontWeight,
+    fontSize,
+    borderRadius,
+    logoSize,
+    logoMode,
+  } = settings;
+
   const text = useFaviconStore((state) => state.text);
   const iconName = useFaviconStore((state) => state.iconName);
   const iconNodes = useFaviconStore((state) => state.iconNodes);
-  const selectedFont = useFaviconStore((state) => state.selectedFont);
-  const fontWeight = useFaviconStore((state) => state.fontWeight);
-  const fontSize = useFaviconStore((state) => state.fontSize);
-  const borderRadius = useFaviconStore((state) => state.borderRadius);
+  const ogTitle = useFaviconStore((state) => state.ogTitle);
+  const ogDescription = useFaviconStore((state) => state.ogDescription);
   const includePwa = useFaviconStore((state) => state.includePwa);
+  const includeOgImage = useFaviconStore((state) => state.includeOgImage);
 
   const svgContent = useSvgImportStore((state) => state.svgContent);
   const isValidSvg = useSvgImportStore((state) => state.isValid);
@@ -35,7 +43,7 @@ export function ExportButton() {
 
   const generateTextFaviconAtSize = async (
     size: number,
-    format: string
+    format: string,
   ): Promise<string> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -48,8 +56,6 @@ export function ExportButton() {
           iconNodes,
           fontColor,
           backgroundColor,
-          backgroundType,
-          gradientColors,
           selectedFont,
           fontWeight,
           fontSize,
@@ -64,9 +70,33 @@ export function ExportButton() {
 
   const generateSvgFaviconAtSize = async (
     size: number,
-    format: string
+    _format: string,
   ): Promise<string> => {
     return svgToPngDataUrl(svgContent, size);
+  };
+
+  const generateOgImage = async (): Promise<string> => {
+    const canvas = document.createElement("canvas");
+    await drawOg(canvas, 1200, 630, {
+      title: ogTitle,
+      description: ogDescription,
+      siteName: metadata.appName || "Underscore",
+      fontColor,
+      backgroundColor,
+      selectedFont,
+      fontWeight,
+      borderRadius,
+      layout: settings.ogLayout || "studio",
+      logoMode: logoMode,
+      logoText: text,
+      logoIconName: iconName,
+      logoIconNodes: iconNodes,
+      logoSvg: svgContent,
+      logoSize: logoSize,
+      showGlassCard: settings.showGlassCard,
+      meshOpacity: settings.meshOpacity,
+    });
+    return canvas.toDataURL("image/png");
   };
 
   const generateManifest = () => {
@@ -246,8 +276,8 @@ Generated with Underscore - Favicon Generator
             size === 180
               ? `apple-touch-icon.${format}`
               : format === "ico" && size === 32
-              ? "favicon.ico"
-              : `favicon-${size}x${size}.${format}`;
+                ? "favicon.ico"
+                : `favicon-${size}x${size}.${format}`;
           zip.file(filename, base64Data, { base64: true });
         }
       }
@@ -257,14 +287,12 @@ Generated with Underscore - Favicon Generator
       zip.file("favicon.svg", svgContent);
     } else {
       const generatedSvg = generateSvg({
-        mode: mode as any,
+        mode: mode as "text" | "icon" | "svg" | "og",
         text,
         iconName,
         iconNodes,
         fontColor,
         backgroundColor,
-        backgroundType,
-        gradientColors,
         selectedFont,
         fontWeight,
         fontSize,
@@ -274,13 +302,19 @@ Generated with Underscore - Favicon Generator
       zip.file("favicon.svg", generatedSvg);
     }
 
+    if (includeOgImage || mode === "og") {
+      const ogDataUrl = await generateOgImage();
+      const base64Data = ogDataUrl.split(",")[1];
+      zip.file("og-image.png", base64Data, { base64: true });
+    }
+
     const iconsetFolder = zip.folder("AppIcon.iconset");
     if (iconsetFolder) {
       for (const size of macOsSizes) {
         const dataUrl1x = await generateFaviconAtSize(size, "png");
         if (dataUrl1x) {
           const base64Data = dataUrl1x.split(",")[1];
-          iconsetFolder.file(`icon_${size}x${size}.png`, base64Data, {
+          iconsetFolder.file(`icon_${size}x_${size}.png`, base64Data, {
             base64: true,
           });
         }
@@ -290,7 +324,7 @@ Generated with Underscore - Favicon Generator
           const dataUrl2x = await generateFaviconAtSize(retinaSize, "png");
           if (dataUrl2x) {
             const base64Data = dataUrl2x.split(",")[1];
-            iconsetFolder.file(`icon_${size}x${size}@2x.png`, base64Data, {
+            iconsetFolder.file(`icon_${size}x_${size}@2x.png`, base64Data, {
               base64: true,
             });
           }

@@ -180,4 +180,4 @@ function ToastContent({ toast }: { toast: ToastObject<any> }) {
   );
 }
 
-export { ToastProvider, type ToastPosition, toastManager };
+export { type ToastPosition, ToastProvider, toastManager };

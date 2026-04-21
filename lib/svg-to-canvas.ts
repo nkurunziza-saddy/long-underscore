@@ -1,6 +1,6 @@
 export function renderSvgToCanvas(
   svgContent: string,
-  size: number
+  size: number,
 ): Promise<HTMLCanvasElement> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("canvas");
@@ -44,7 +44,7 @@ export function renderSvgToCanvas(
 
 export async function svgToPngDataUrl(
   svgContent: string,
-  size: number
+  size: number,
 ): Promise<string> {
   const canvas = await renderSvgToCanvas(svgContent, size);
   return canvas.toDataURL("image/png");

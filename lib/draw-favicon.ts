@@ -20,24 +20,53 @@ export const ICONS: Record<string, string> = {
     "M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z",
 };
 
-export const drawFavicon = (
+/**
+ * Helper to apply background color or gradient to canvas
+ */
+export function applyBackground(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  color: string,
+  radius: number,
+) {
+  if (color === "transparent") return;
+
+  ctx.beginPath();
+  if (color.includes("gradient")) {
+    const matches = color.match(/#[a-fA-F0-9]{3,6}|rgba?\([^)]+\)/g);
+    if (matches && matches.length >= 2) {
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, matches[0]);
+      gradient.addColorStop(1, matches[matches.length - 1]);
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = color;
+    }
+  } else {
+    ctx.fillStyle = color;
+  }
+
+  ctx.roundRect(0, 0, width, height, radius);
+  ctx.fill();
+}
+
+export function drawFavicon(
   canvas: HTMLCanvasElement,
   size: number,
   config: {
     mode: "text" | "icon" | "svg";
     text: string;
     iconName: string;
-    iconNodes?: any[] | null;
+    iconNodes?: unknown[] | null;
     fontColor: string;
     backgroundColor: string;
-    backgroundType?: "solid" | "gradient";
-    gradientColors?: [string, string];
     selectedFont: string;
     fontWeight: number;
     fontSize: number;
     borderRadius: number;
-  }
-) => {
+  },
+) {
   const {
     mode,
     text,
@@ -45,47 +74,21 @@ export const drawFavicon = (
     iconNodes = null,
     fontColor,
     backgroundColor,
-    backgroundType = "solid",
-    gradientColors = ["#000000", "#ffffff"],
     selectedFont,
     fontWeight,
     fontSize,
     borderRadius,
   } = config;
 
-  const ctx = canvas.getContext("2d", {
-    alpha: true,
-    willReadFrequently: false,
-  });
+  const ctx = canvas.getContext("2d", { alpha: true });
   if (!ctx) return;
 
   canvas.width = size;
   canvas.height = size;
   ctx.clearRect(0, 0, size, size);
 
-  // Draw background
   const radius = (borderRadius / 100) * (size / 2);
-
-  ctx.beginPath();
-  if (backgroundType === "gradient") {
-    const gradient = ctx.createLinearGradient(0, 0, size, size);
-    gradient.addColorStop(0, gradientColors[0]);
-    gradient.addColorStop(1, gradientColors[1]);
-    ctx.fillStyle = gradient;
-  } else {
-    ctx.fillStyle = backgroundColor;
-  }
-
-  ctx.moveTo(radius, 0);
-  ctx.lineTo(size - radius, 0);
-  ctx.arcTo(size, 0, size, radius, radius);
-  ctx.lineTo(size, size - radius);
-  ctx.arcTo(size, size, size - radius, size, radius);
-  ctx.lineTo(radius, size);
-  ctx.arcTo(0, size, 0, size - radius, radius);
-  ctx.lineTo(0, radius);
-  ctx.arcTo(0, 0, radius, 0, radius);
-  ctx.fill();
+  applyBackground(ctx, size, size, backgroundColor, radius);
 
   if (mode === "text") {
     ctx.fillStyle = fontColor;
@@ -93,21 +96,18 @@ export const drawFavicon = (
     ctx.textBaseline = "alphabetic";
 
     const scaledFontSize = Math.round((fontSize / 100) * size);
-    ctx.font = `${fontWeight} ${scaledFontSize}px ${getCSSFontFamily(
-      selectedFont
-    )}`;
+    ctx.font = `${fontWeight} ${scaledFontSize}px ${getCSSFontFamily(selectedFont)}`;
 
-    const textContent = text;
-    const metrics = ctx.measureText(textContent);
-    const ascent = metrics.actualBoundingBoxAscent;
-    const descent = metrics.actualBoundingBoxDescent;
-    const verticalOffset = (ascent - descent) / 2;
+    // Precise vertical centering
+    const metrics = ctx.measureText(text);
+    const verticalOffset =
+      (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
 
-    ctx.fillText(textContent, size / 2, size / 2 + verticalOffset);
+    ctx.fillText(text, size / 2, size / 2 + verticalOffset);
   } else if (mode === "icon") {
-    const pathData = ICONS[iconName];
-    const nodes = iconNodes || (pathData ? [["path", { d: pathData }]] : null);
-
+    const nodes =
+      (iconNodes as any[]) ||
+      (ICONS[iconName] ? [["path", { d: ICONS[iconName] }]] : null);
     if (nodes) {
       ctx.strokeStyle = fontColor;
       ctx.lineWidth = 2;
@@ -120,40 +120,18 @@ export const drawFavicon = (
       ctx.save();
       ctx.translate(size / 2, size / 2);
       ctx.scale(scale, scale);
-      ctx.translate(-12, -12); // Center the 24x24 icon
+      ctx.translate(-12, -12);
 
-      for (const [tag, attrs] of nodes) {
-        if (tag === "path") {
-          ctx.stroke(new Path2D(attrs.d));
-        } else if (tag === "circle") {
+      for (const node of nodes) {
+        const [tag, attrs] = node as [string, Record<string, any>];
+        if (tag === "path") ctx.stroke(new Path2D(attrs.d));
+        else if (tag === "circle") {
           ctx.beginPath();
           ctx.arc(attrs.cx, attrs.cy, attrs.r, 0, Math.PI * 2);
-          ctx.stroke();
-        } else if (tag === "line") {
-          ctx.beginPath();
-          ctx.moveTo(attrs.x1, attrs.y1);
-          ctx.lineTo(attrs.x2, attrs.y2);
-          ctx.stroke();
-        } else if (tag === "rect") {
-          ctx.strokeRect(attrs.x, attrs.y, attrs.width, attrs.height);
-        } else if (tag === "polyline" || tag === "polygon") {
-          const points = attrs.points
-            .split(" ")
-            .map((p: string) => p.split(",").map(Number));
-          ctx.beginPath();
-          ctx.moveTo(points[0][0], points[0][1]);
-          for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i][0], points[i][1]);
-          }
-          if (tag === "polygon") ctx.closePath();
-          ctx.stroke();
-        } else if (tag === "ellipse") {
-          ctx.beginPath();
-          ctx.ellipse(attrs.cx, attrs.cy, attrs.rx, attrs.ry, 0, 0, Math.PI * 2);
           ctx.stroke();
         }
       }
       ctx.restore();
     }
   }
-};
+}
