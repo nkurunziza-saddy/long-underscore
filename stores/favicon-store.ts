@@ -1,11 +1,16 @@
 import { create } from "zustand";
 import type { MetadataFormData } from "@/components/metadata-form";
 
-export type GeneratorMode = "text" | "svg";
+export type GeneratorMode = "text" | "svg" | "icon";
+export type BackgroundType = "solid" | "gradient";
 
 interface FaviconState {
   mode: GeneratorMode;
   text: string;
+  iconName: string;
+  iconNodes: any[] | null;
+  backgroundType: BackgroundType;
+  gradientColors: [string, string];
   fontColor: string;
   backgroundColor: string;
   selectedFont: string;
@@ -20,8 +25,12 @@ interface FaviconState {
   setMode: (mode: GeneratorMode) => void;
 
   setText: (text: string) => void;
+  setIconName: (name: string) => void;
+  setIconNodes: (nodes: any[] | null) => void;
   setFontColor: (color: string) => void;
   setBackgroundColor: (color: string) => void;
+  setBackgroundType: (type: BackgroundType) => void;
+  setGradientColors: (colors: [string, string]) => void;
   setSelectedFont: (font: string) => void;
   setFontWeight: (weight: number) => void;
   setFontSize: (size: number) => void;
@@ -34,6 +43,10 @@ interface FaviconState {
 export const useFaviconStore = create<FaviconState>((set) => ({
   mode: "text",
   text: "S",
+  iconName: "Zap",
+  iconNodes: null,
+  backgroundType: "solid",
+  gradientColors: ["#065f46", "#34d399"],
   fontColor: "#065f46",
   backgroundColor: "#ffffff",
   selectedFont: "poppins",
@@ -55,8 +68,12 @@ export const useFaviconStore = create<FaviconState>((set) => ({
   setMode: (mode) => set({ mode }),
 
   setText: (text) => set({ text }),
+  setIconName: (iconName) => set({ iconName }),
+  setIconNodes: (iconNodes) => set({ iconNodes }),
   setFontColor: (fontColor) => set({ fontColor }),
   setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
+  setBackgroundType: (backgroundType) => set({ backgroundType }),
+  setGradientColors: (gradientColors) => set({ gradientColors }),
   setSelectedFont: (selectedFont) => set({ selectedFont }),
   setFontWeight: (fontWeight) => set({ fontWeight }),
   setFontSize: (fontSize) => set({ fontSize }),

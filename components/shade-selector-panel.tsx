@@ -1,5 +1,8 @@
+import { Wand2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { getContrastColor } from "@/lib/contrast";
 import { cn } from "@/lib/utils";
 import { useFaviconStore } from "@/stores/favicon-store";
 
@@ -16,14 +19,37 @@ export function ShadeSelectorPanel({ type, shades }: ShadeSelectorPanelProps) {
     (state) => state.setBackgroundColor,
   );
 
+  const backgroundType = useFaviconStore((state) => state.backgroundType);
+  const gradientColors = useFaviconStore((state) => state.gradientColors);
+
   const isTextMode = type === "text";
   const color = isTextMode ? fontColor : backgroundColor;
   const setColor = isTextMode ? setFontColor : setBackgroundColor;
 
+  const handleAutoContrast = () => {
+    if (isTextMode) {
+      const bg = backgroundType === "gradient" ? gradientColors : backgroundColor;
+      setFontColor(getContrastColor(bg));
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isTextMode ? "Text Color" : "Background Color"}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>{isTextMode ? "Text Color" : "Background Color"}</CardTitle>
+          {isTextMode && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAutoContrast}
+              title="Auto contrast fix"
+            >
+              <Wand2 />
+              Auto Fix
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardPanel className="space-y-4">
         <div className="grid grid-cols-5 gap-2">

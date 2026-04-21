@@ -1,35 +1,18 @@
-import type * as React from "react";
+import * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-function Textarea({
-  className,
-  size = "default",
-  ...props
-}: React.ComponentProps<"textarea"> & {
-  size?: "sm" | "default" | "lg" | number;
-}) {
+function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
-    <span
+    <textarea
+      data-slot="textarea"
       className={cn(
-        "relative inline-flex w-full rounded-lg border border-input bg-background bg-clip-padding text-base ring-ring/24 transition-[color,background-color,box-shadow,border-color] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:border-ring has-focus-visible:ring-[3px] has-disabled:opacity-64 has-aria-invalid:border-destructive/36 has-aria-invalid:before:shadow-none has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 sm:text-sm dark:bg-input/32 dark:bg-clip-border dark:has-aria-invalid:ring-destructive/24",
-        className,
+        "flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+        className
       )}
-      data-slot="textarea-control"
-    >
-      <textarea
-        className={cn(
-          "field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] outline-none max-sm:min-h-20.5 resize-none",
-          size === "sm" &&
-            "min-h-16.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)] max-sm:min-h-19.5",
-          size === "lg" &&
-            "min-h-18.5 py-[calc(--spacing(2)-1px)] max-sm:min-h-21.5",
-        )}
-        data-slot="textarea"
-        {...props}
-      />
-    </span>
-  );
+      {...props}
+    />
+  )
 }
 
-export { Textarea };
+export { Textarea }

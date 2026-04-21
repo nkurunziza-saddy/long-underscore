@@ -7,30 +7,46 @@ export function useUrlSync() {
 
   const [params, setParams] = useQueryStates(
     {
+      mode: parseAsString.withDefault("text"),
       text: parseAsString.withDefault("S"),
-      fontColor: parseAsString.withDefault("#c5b29e"),
-      backgroundColor: parseAsString.withDefault("#3e2e23"),
-      selectedFont: parseAsString.withDefault("montserrat"),
-      fontWeight: parseAsInteger.withDefault(600),
+      iconName: parseAsString.withDefault("Zap"),
+      backgroundType: parseAsString.withDefault("solid"),
+      gradientColor1: parseAsString.withDefault("#065f46"),
+      gradientColor2: parseAsString.withDefault("#34d399"),
+      fontColor: parseAsString.withDefault("#065f46"),
+      backgroundColor: parseAsString.withDefault("#ffffff"),
+      selectedFont: parseAsString.withDefault("poppins"),
+      fontWeight: parseAsInteger.withDefault(700),
       fontSize: parseAsInteger.withDefault(48),
-      borderRadius: parseAsInteger.withDefault(48),
-      selectedColorFamily: parseAsString.withDefault("mocha"),
+      borderRadius: parseAsInteger.withDefault(8),
+      selectedColorFamily: parseAsString.withDefault("emerald"),
       appName: parseAsString.withDefault("My App"),
       appShortName: parseAsString.withDefault("App"),
       description: parseAsString.withDefault("A progressive web application"),
       author: parseAsString.withDefault(""),
       keywords: parseAsString.withDefault(""),
-      themeColor: parseAsString.withDefault("#c5b29e"),
+      themeColor: parseAsString.withDefault("#065f46"),
     },
     {
       history: "replace",
       shallow: true,
-    },
+    }
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Store setters are stable
   useEffect(() => {
+    if (store.mode !== params.mode) store.setMode(params.mode as any);
     if (store.text !== params.text) store.setText(params.text);
+    if (store.iconName !== params.iconName) store.setIconName(params.iconName);
+    if (store.backgroundType !== params.backgroundType)
+      store.setBackgroundType(params.backgroundType as any);
+    if (
+      store.gradientColors[0] !== params.gradientColor1 ||
+      store.gradientColors[1] !== params.gradientColor2
+    ) {
+      store.setGradientColors([params.gradientColor1, params.gradientColor2]);
+    }
+
     if (store.fontColor !== params.fontColor)
       store.setFontColor(params.fontColor);
     if (store.backgroundColor !== params.backgroundColor)
@@ -45,7 +61,6 @@ export function useUrlSync() {
     if (store.selectedColorFamily !== params.selectedColorFamily)
       store.setSelectedColorFamily(params.selectedColorFamily);
 
-    // Check metadata equality before updating
     const newMetadata = {
       appName: params.appName,
       appShortName: params.appShortName,
@@ -67,7 +82,12 @@ export function useUrlSync() {
       store.setMetadata(newMetadata);
     }
   }, [
+    params.mode,
     params.text,
+    params.iconName,
+    params.backgroundType,
+    params.gradientColor1,
+    params.gradientColor2,
     params.fontColor,
     params.backgroundColor,
     params.selectedFont,
@@ -86,7 +106,12 @@ export function useUrlSync() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setParams({
+        mode: store.mode,
         text: store.text,
+        iconName: store.iconName,
+        backgroundType: store.backgroundType,
+        gradientColor1: store.gradientColors[0],
+        gradientColor2: store.gradientColors[1],
         fontColor: store.fontColor,
         backgroundColor: store.backgroundColor,
         selectedFont: store.selectedFont,
@@ -105,7 +130,11 @@ export function useUrlSync() {
 
     return () => clearTimeout(timer);
   }, [
+    store.mode,
     store.text,
+    store.iconName,
+    store.backgroundType,
+    store.gradientColors,
     store.fontColor,
     store.backgroundColor,
     store.selectedFont,

@@ -73,9 +73,9 @@ export function SvgImportPanel() {
               variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="h-6 px-2"
+              title="Clear SVG"
             >
-              <X className="h-3 w-3 mr-1" />
+              <X />
               Clear
             </Button>
           )}

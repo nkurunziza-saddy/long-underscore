@@ -14,6 +14,7 @@ import { FONT_WEIGHT_NAMES, FONTS } from "@/lib/fonts";
 import { useFaviconStore } from "@/stores/favicon-store";
 
 export function EditorControls() {
+  const mode = useFaviconStore((state) => state.mode);
   const text = useFaviconStore((state) => state.text);
   const setText = useFaviconStore((state) => state.setText);
   const selectedFont = useFaviconStore((state) => state.selectedFont);
@@ -72,88 +73,92 @@ export function EditorControls() {
         <CardTitle>Editor</CardTitle>
       </CardHeader>
       <CardPanel className="space-y-4">
-        <div className="space-y-2">
-          <Label
-            htmlFor="text"
-            className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
-          >
-            Text
-          </Label>
-          <Input
-            id="text"
-            value={text}
-            onChange={handleTextChange}
-            placeholder="S"
-            // maxLength={3}
-          />
-          <p className="text-xs text-muted-foreground mt-1.5">
-            Shorter text works best for favicons
-          </p>
-        </div>
+        {mode === "text" && (
+          <>
+            <div className="space-y-2">
+              <Label
+                htmlFor="text"
+                className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              >
+                Text
+              </Label>
+              <Input
+                id="text"
+                value={text}
+                onChange={handleTextChange}
+                placeholder="S"
+                // maxLength={3}
+              />
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Shorter text works best for favicons
+              </p>
+            </div>
 
-        <div className="space-y-2">
-          <Label
-            htmlFor="font"
-            className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
-          >
-            Font
-          </Label>
-          <Select
-            value={selectedFont}
-            onValueChange={handleFontChange}
-            items={FONTS.map((font) => ({
-              value: font.value,
-              label: font.name,
-            }))}
-          >
-            <SelectTrigger id="font">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectPopup>
-              {FONTS.map((font) => (
-                <SelectItem key={font.value} value={font.value}>
-                  {font.name}
-                </SelectItem>
-              ))}
-            </SelectPopup>
-          </Select>
-        </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="font"
+                className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              >
+                Font
+              </Label>
+              <Select
+                value={selectedFont}
+                onValueChange={handleFontChange}
+                items={FONTS.map((font) => ({
+                  value: font.value,
+                  label: font.name,
+                }))}
+              >
+                <SelectTrigger id="font">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectPopup>
+                  {FONTS.map((font) => (
+                    <SelectItem key={font.value} value={font.value}>
+                      {font.name}
+                    </SelectItem>
+                  ))}
+                </SelectPopup>
+              </Select>
+            </div>
 
-        <div className="space-y-2">
-          <Label
-            htmlFor="weight"
-            className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
-          >
-            Weight
-          </Label>
-          <Select
-            value={fontWeight.toString()}
-            onValueChange={handleWeightChange}
-            items={fontWeights.map((weight) => ({
-              value: weight.toString(),
-              label:
-                FONT_WEIGHT_NAMES[weight as keyof typeof FONT_WEIGHT_NAMES] ||
-                weight.toString(),
-            }))}
-          >
-            <SelectTrigger id="weight">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectPopup>
-              {fontWeights.map((weight) => (
-                <SelectItem key={weight} value={weight.toString()}>
-                  {FONT_WEIGHT_NAMES[
-                    weight as keyof typeof FONT_WEIGHT_NAMES
-                  ] || weight}
-                </SelectItem>
-              ))}
-            </SelectPopup>
-          </Select>
-        </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="weight"
+                className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              >
+                Weight
+              </Label>
+              <Select
+                value={fontWeight.toString()}
+                onValueChange={handleWeightChange}
+                items={fontWeights.map((weight) => ({
+                  value: weight.toString(),
+                  label:
+                    FONT_WEIGHT_NAMES[weight as keyof typeof FONT_WEIGHT_NAMES] ||
+                    weight.toString(),
+                }))}
+              >
+                <SelectTrigger id="weight">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectPopup>
+                  {fontWeights.map((weight) => (
+                    <SelectItem key={weight} value={weight.toString()}>
+                      {FONT_WEIGHT_NAMES[
+                        weight as keyof typeof FONT_WEIGHT_NAMES
+                      ] || weight}
+                    </SelectItem>
+                  ))}
+                </SelectPopup>
+              </Select>
+            </div>
+          </>
+        )}
 
         <div className="space-y-2">
           <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Font Size
+            {mode === "icon" ? "Icon Size" : "Font Size"}
           </Label>
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">20px</span>

@@ -14,8 +14,12 @@ export function ExportButton() {
   const mode = useFaviconStore((state) => state.mode);
   const metadata = useFaviconStore((state) => state.metadata);
   const backgroundColor = useFaviconStore((state) => state.backgroundColor);
+  const backgroundType = useFaviconStore((state) => state.backgroundType);
+  const gradientColors = useFaviconStore((state) => state.gradientColors);
   const fontColor = useFaviconStore((state) => state.fontColor);
   const text = useFaviconStore((state) => state.text);
+  const iconName = useFaviconStore((state) => state.iconName);
+  const iconNodes = useFaviconStore((state) => state.iconNodes);
   const selectedFont = useFaviconStore((state) => state.selectedFont);
   const fontWeight = useFaviconStore((state) => state.fontWeight);
   const fontSize = useFaviconStore((state) => state.fontSize);
@@ -38,9 +42,14 @@ export function ExportButton() {
         const canvas = document.createElement("canvas");
 
         drawFavicon(canvas, size, {
+          mode: mode as "text" | "icon",
           text,
+          iconName,
+          iconNodes,
           fontColor,
           backgroundColor,
+          backgroundType,
+          gradientColors,
           selectedFont,
           fontWeight,
           fontSize,
@@ -57,9 +66,6 @@ export function ExportButton() {
     size: number,
     format: string
   ): Promise<string> => {
-    if (format === "ico") {
-      return svgToPngDataUrl(svgContent, size);
-    }
     return svgToPngDataUrl(svgContent, size);
   };
 
@@ -251,9 +257,14 @@ Generated with Underscore - Favicon Generator
       zip.file("favicon.svg", svgContent);
     } else {
       const generatedSvg = generateSvg({
+        mode: mode as any,
         text,
+        iconName,
+        iconNodes,
         fontColor,
         backgroundColor,
+        backgroundType,
+        gradientColors,
         selectedFont,
         fontWeight,
         fontSize,
