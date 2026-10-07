@@ -1,128 +1,55 @@
-import type { Metadata } from "next";
-import {
-  Inter,
-  Lora,
-  Merriweather,
-  Montserrat,
-  Open_Sans,
-  Playfair_Display,
-  Poppins,
-  Roboto,
-  Space_Mono,
-} from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import type React from "react";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Suspense } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { BRAND } from "@/lib/brand";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: true,
-});
+const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
+// The default mark is set in Poppins Bold. Self-hosting that one weight lets
+// the first paint draw it without waiting on Google Fonts; every other face
+// is fetched on demand (see lib/font-loader.ts).
 const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
+  weight: "700",
   subsets: ["latin"],
+  display: "block",
   variable: "--font-poppins",
-  display: "swap",
-  preload: true,
 });
 
-const roboto = Roboto({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  variable: "--font-roboto",
-  display: "swap",
-});
-
-const openSans = Open_Sans({
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-open-sans",
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-  preload: true,
-});
-
-const merriweather = Merriweather({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-merriweather",
-  display: "swap",
-});
-
-const lora = Lora({
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-lora",
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-mono",
-  display: "swap",
-});
+const title = "_ · one mark, every surface";
+const { description } = BRAND;
 
 export const metadata: Metadata = {
-  title: "_",
-  description:
-    "Create professional favicons and logos from text, emojis, or images. Complete export package with PWA support and all formats.",
-  keywords: "favicon, logo, generator, PWA, icon, web design, branding",
-  authors: [{ name: "Nkurunziza Saddy" }],
-  creator: "Nkurunziza Saddy",
-  publisher: "Nkurunziza Saddy",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL("https://longunderscore.vercel.app"),
+  metadataBase: new URL(BRAND.url),
+  title,
+  description,
+  authors: [{ name: BRAND.author }],
+  creator: BRAND.author,
   openGraph: {
-    title: "_",
-    description:
-      "Create professional favicons and logos with complete PWA support.",
-    url: "https://longunderscore.vercel.app",
-    siteName: "",
+    title,
+    description,
+    url: BRAND.url,
+    siteName: BRAND.name,
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "_",
-    description:
-      "Create professional favicons and logos with complete PWA support.",
-    creator: "@nk_saddy",
+    title,
+    description,
+    creator: BRAND.handle,
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#070708" },
+  ],
 };
 
 export default function RootLayout({
@@ -133,22 +60,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={` ${inter.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${playfair.variable} ${merriweather.variable} ${lora.variable} ${spaceMono.variable} antialiased`}
+      suppressHydrationWarning
+      className={`${sans.variable} ${mono.variable} ${poppins.variable} antialiased`}
     >
-      <body className="font-sans">
-        <Suspense fallback={null}>
-          <NuqsAdapter>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ToastProvider>{children}</ToastProvider>
-            </ThemeProvider>
-            <Analytics />
-          </NuqsAdapter>
-        </Suspense>
+      <body className="min-h-dvh">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

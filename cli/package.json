@@ -1,0 +1,27 @@
+{
+  "name": "long-underscore",
+  "version": "0.1.0",
+  "description": "One mark, every surface: a favicon kit and social card from the command line, for people and for agents.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "long-underscore": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "prepublishOnly": "cd .. && bun run cli:build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nkurunziza-saddy/long-underscore.git",
+    "directory": "cli"
+  },
+  "homepage": "https://longunderscore.vercel.app",
+  "keywords": ["favicon", "icon", "og-image", "manifest", "cli", "agent"],
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.10"
+  }
+}

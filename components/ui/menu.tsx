@@ -1,242 +1,124 @@
 "use client";
 
-import { Menu as MenuPrimitive } from "@base-ui-components/react/menu";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
-import type * as React from "react";
-
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { cn } from "@/lib/utils";
+import { menuRowClass, popupClass, positionerClass } from "./overlay";
+import { chosenSegmentClass, segmentClass, trackClass } from "./segmented";
 
 const Menu = MenuPrimitive.Root;
 
-const MenuPortal = MenuPrimitive.Portal;
+/** Usually a Button given as `render`, which keeps its own `data-slot`. */
+const MenuTrigger = MenuPrimitive.Trigger;
 
-function MenuTrigger(props: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="menu-trigger" {...props} />;
-}
-
+/** As wide as what it holds, and never narrower than its trigger or 11rem. */
 function MenuPopup({
-  className,
+  align = "start",
+  alignOffset,
+  side,
   sideOffset = 4,
-  align = "center",
-  side = "bottom",
-  alignOffset = 0,
+  className,
   ...props
-}: MenuPrimitive.Popup.Props & {
-  align?: MenuPrimitive.Positioner.Props["align"];
-  sideOffset?: MenuPrimitive.Positioner.Props["sideOffset"];
-  alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"];
-  side?: MenuPrimitive.Positioner.Props["side"];
-}) {
+}: MenuPrimitive.Popup.Props &
+  Pick<
+    MenuPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset"
+  >) {
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner
+        className={positionerClass}
         align={align}
         alignOffset={alignOffset}
-        className="z-50"
-        data-slot="menu-positioner"
         side={side}
         sideOffset={sideOffset}
       >
-        <span className="relative flex origin-(--transform-origin) rounded-lg border bg-popover transition-[scale,opacity] has-data-starting-style:scale-98 has-data-starting-style:opacity-0">
-          <MenuPrimitive.Popup
-            className={cn(
-              "max-h-(--available-height) min-w-32 overflow-y-auto p-1",
-              className,
-            )}
-            data-slot="menu-popup"
-            {...props}
-          />
-        </span>
+        <MenuPrimitive.Popup
+          data-slot="menu-popup"
+          className={cn(
+            popupClass,
+            "max-h-(--available-height) w-max max-w-(--available-width) min-w-[max(11rem,var(--anchor-width))] overflow-x-hidden overflow-y-auto p-1",
+            className,
+          )}
+          {...props}
+        />
       </MenuPrimitive.Positioner>
     </MenuPrimitive.Portal>
   );
 }
 
-function MenuGroup(props: MenuPrimitive.Group.Props) {
-  return <MenuPrimitive.Group data-slot="menu-group" {...props} />;
-}
-
-function MenuItem({
-  className,
-  inset,
-  variant = "default",
-  ...props
-}: MenuPrimitive.Item.Props & {
-  inset?: boolean;
-  variant?: "default" | "destructive";
-}) {
+function MenuItem({ className, ...props }: MenuPrimitive.Item.Props) {
   return (
     <MenuPrimitive.Item
+      data-slot="menu-item"
       className={cn(
-        "flex cursor-default items-center gap-2 rounded-sm px-2 py-1 text-base outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-64 data-highlighted:bg-accent data-highlighted:text-accent-foreground data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground sm:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        menuRowClass,
+        "[&_svg]:text-fg-3 data-highlighted:[&_svg]:text-foreground",
         className,
       )}
-      data-inset={inset}
-      data-slot="menu-item"
-      data-variant={variant}
       {...props}
     />
   );
 }
 
-function MenuCheckboxItem({
-  className,
-  children,
-  checked,
-  ...props
-}: MenuPrimitive.CheckboxItem.Props) {
-  return (
-    <MenuPrimitive.CheckboxItem
-      checked={checked}
-      className={cn(
-        "grid cursor-default grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] data-disabled:pointer-events-none data-disabled:opacity-64 data-highlighted:bg-accent data-highlighted:text-accent-foreground sm:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      data-slot="menu-checkbox-item"
-      {...props}
-    >
-      <MenuPrimitive.CheckboxItemIndicator className="col-start-1">
-        <CheckIcon />
-      </MenuPrimitive.CheckboxItemIndicator>
-      <span className="col-start-2">{children}</span>
-    </MenuPrimitive.CheckboxItem>
-  );
-}
-
-function MenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
-  return <MenuPrimitive.RadioGroup data-slot="menu-radio-group" {...props} />;
-}
-
-function MenuRadioItem({
-  className,
-  children,
-  ...props
-}: MenuPrimitive.RadioItem.Props) {
-  return (
-    <MenuPrimitive.RadioItem
-      className={cn(
-        "grid cursor-default grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] data-disabled:pointer-events-none data-disabled:opacity-64 data-highlighted:bg-accent data-highlighted:text-accent-foreground sm:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      data-slot="menu-radio-item"
-      {...props}
-    >
-      <MenuPrimitive.RadioItemIndicator className="col-start-1">
-        <CheckIcon />
-      </MenuPrimitive.RadioItemIndicator>
-      <span className="col-start-2">{children}</span>
-    </MenuPrimitive.RadioItem>
-  );
-}
-
-function MenuGroupLabel({
-  className,
-  inset,
-  ...props
-}: MenuPrimitive.GroupLabel.Props & {
-  inset?: boolean;
+/**
+ * A choice among a few on one line, the options as icons on a segmented
+ * track. For a setting changed often; the menu stays open so the change can
+ * be seen and undone.
+ */
+function MenuSegments<T extends string>({
+  label,
+  value,
+  onValueChange,
+  options,
+}: {
+  label: string;
+  value: T | undefined;
+  onValueChange: (value: T) => void;
+  /** `label` is read out and shown on hover; only the icon is drawn. */
+  options: readonly { value: T; label: string; icon: React.ReactNode }[];
 }) {
   return (
-    <MenuPrimitive.GroupLabel
-      className={cn(
-        "px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:ps-9 sm:data-inset:ps-8",
-        className,
-      )}
-      data-inset={inset}
-      data-slot="menu-label"
-      {...props}
-    />
+    <MenuPrimitive.Group
+      data-slot="menu-segments"
+      className="flex h-7 items-center gap-2 pr-0.5 pl-2.5 text-sm text-fg-2"
+    >
+      <MenuPrimitive.GroupLabel className="min-w-0 flex-1 truncate">
+        {label}
+      </MenuPrimitive.GroupLabel>
+      <MenuPrimitive.RadioGroup
+        value={value}
+        onValueChange={(next) => onValueChange(next as T)}
+        className={trackClass}
+      >
+        {options.map((option) => (
+          <MenuPrimitive.RadioItem
+            key={option.value}
+            value={option.value}
+            closeOnClick={false}
+            aria-label={option.label}
+            title={option.label}
+            className={cn(
+              segmentClass,
+              chosenSegmentClass,
+              "h-5 w-7 cursor-default outline-hidden data-highlighted:text-foreground",
+            )}
+          >
+            {option.icon}
+          </MenuPrimitive.RadioItem>
+        ))}
+      </MenuPrimitive.RadioGroup>
+    </MenuPrimitive.Group>
   );
 }
 
 function MenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {
   return (
     <MenuPrimitive.Separator
-      className={cn("mx-2 my-1 h-px bg-border", className)}
       data-slot="menu-separator"
+      className={cn("-mx-1 my-1 h-px bg-line", className)}
       {...props}
     />
   );
 }
 
-function MenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "ms-auto text-xs tracking-widest text-muted-foreground/64",
-        className,
-      )}
-      data-slot="menu-shortcut"
-      {...props}
-    />
-  );
-}
-
-function MenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot="menu-sub" {...props} />;
-}
-
-function MenuSubTrigger({
-  className,
-  inset,
-  children,
-  ...props
-}: MenuPrimitive.SubmenuTrigger.Props & {
-  inset?: boolean;
-}) {
-  return (
-    <MenuPrimitive.SubmenuTrigger
-      className={cn(
-        "flex items-center gap-2 rounded-sm px-2 py-1 text-base outline-none data-disabled:pointer-events-none data-disabled:opacity-64 data-highlighted:bg-accent data-highlighted:text-accent-foreground data-inset:ps-8 sm:text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      data-inset={inset}
-      data-slot="menu-sub-trigger"
-      {...props}
-    >
-      {children}
-      <ChevronRightIcon className="ms-auto" />
-    </MenuPrimitive.SubmenuTrigger>
-  );
-}
-
-function MenuSubPopup({
-  className,
-  sideOffset = 0,
-  alignOffset = -4,
-  align = "start",
-  ...props
-}: MenuPrimitive.Popup.Props & {
-  align?: MenuPrimitive.Positioner.Props["align"];
-  sideOffset?: MenuPrimitive.Positioner.Props["sideOffset"];
-  alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"];
-}) {
-  return (
-    <MenuPopup
-      align={align}
-      alignOffset={alignOffset}
-      className={className}
-      data-slot="menu-sub-content"
-      sideOffset={sideOffset}
-      {...props}
-    />
-  );
-}
-
-export {
-  Menu,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuItem,
-  MenuPopup,
-  MenuPortal,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuShortcut,
-  MenuSub,
-  MenuSubPopup,
-  MenuSubTrigger,
-  MenuTrigger,
-};
+export { Menu, MenuItem, MenuPopup, MenuSegments, MenuSeparator, MenuTrigger };

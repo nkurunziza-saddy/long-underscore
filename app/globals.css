@@ -1,135 +1,343 @@
+/*
+ * The studio's look, taken from miway: its tokens at gray, Fine contrast,
+ * compact density and Soft corners. Every token is here and only here.
+ */
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-}
-
+/*
+ * Colours. Surfaces separate by fill: `app` (chrome), `page` (the inset),
+ * `panel` (a card), `control` (what you press), `popover` (what floats).
+ * fg-3, warn, success and destructive sit at the edge of 4.5:1 on every
+ * surface: re-measure before changing them.
+ */
 :root {
-  --radius: 0rem;
-  --background: var(--color-white);
-  --foreground: var(--color-zinc-900);
-  --card: var(--color-white);
-  --card-foreground: var(--color-zinc-900);
-  --popover: var(--color-white);
-  --popover-foreground: var(--color-zinc-900);
-  --primary: var(--color-zinc-800);
-  --primary-foreground: var(--color-zinc-50);
-  --secondary: --alpha(var(--color-black) / 4%);
-  --secondary-foreground: var(--color-zinc-900);
-  --muted: --alpha(var(--color-black) / 4%);
-  --muted-foreground: var(--color-zinc-600);
-  --accent: --alpha(var(--color-black) / 4%);
-  --accent-foreground: var(--color-zinc-900);
-  --destructive: var(--color-red-500);
-  --destructive-foreground: var(--color-red-700);
-  --info: var(--color-blue-500);
-  --info-foreground: var(--color-blue-700);
-  --success: var(--color-emerald-500);
-  --success-foreground: var(--color-emerald-700);
-  --warning: var(--color-amber-500);
-  --warning-foreground: var(--color-amber-700);
-  --border: --alpha(var(--color-black) / 12%);
-  --input: --alpha(var(--color-black) / 12%);
-  --ring: var(--color-zinc-400);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --app: oklch(0.9702 0 0);
+  --background: #ffffff;
+  --foreground: oklch(0.2046 0 0);
+  --fg-2: oklch(0.4009 0.0133 285.8);
+  --fg-3: oklch(0.5305 0.0124 286);
+
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+
+  --primary: var(--foreground);
+  --primary-hover: oklch(0.3023 0.0053 286.1);
+  --primary-foreground: #ffffff;
+
+  --warn: #8c5304;
+  --success: #176b3a;
+  --destructive: #b82e2e;
+
+  --border: oklch(0.9255 0.0027 286.3);
+  --line: oklch(0.9524 0.0013 286.4);
+  --input: oklch(0.8954 0.0041 286.3);
+  --ring: #2563eb;
+
+  --page: #ffffff;
+  --panel: oklch(0.9764 0.0013 286.4);
+  --panel-hover: oklch(0.9584 0.0013 286.4);
+  --control: oklch(0.9584 0.0013 286.4);
+  --control-hover: oklch(0.9316 0.0027 286.3);
+
+  /* Form field fill: a tint, so it reads on both the page and panels. */
+  --field: rgb(0 0 0 / 0.04);
+  --field-hover: rgb(0 0 0 / 0.06);
+
+  /* One line per source pixel, over a magnified render. */
+  --pixel-line: rgb(0 0 0 / 0.14);
+
+  /* Corners, at Soft. A surface stays a little rounder than what sits in it. */
+  --round-sm: 4px;
+  --round-md: 6px;
+  --round-lg: 8px;
+  --round-card: 12px;
+  --round-menu: 12px;
+  --round-dialog: 16px;
+  --round-control: 8px;
+  /* The line between the rows of a card: a gap that shows the page through. */
+  --seam: var(--page);
+  /*
+   * Edges, at Fine contrast: a hairline round the two things a page is made
+   * of, the inset and its cards, and nothing round what is pressed. It is
+   * translucent, so it takes its tone from whatever it lies on.
+   */
+  --edge-width: 1px;
+  --edge-card: rgb(0 0 0 / 0.05);
+  --shadow-card: none;
+  --shadow-edge: none;
+  --shadow-control: 0 1px 1px rgb(0 0 0 / 0.04);
+  /* The page inset and the controls beside it. */
+  --shadow-page: 0 0 0 1px rgb(0 0 0 / 0.05);
+  /* Carries a 1px ring, so floating surfaces need no border. */
+  --shadow-pop:
+    0 20px 44px -10px rgb(0 0 0 / 0.16), 0 2px 6px rgb(0 0 0 / 0.04),
+    0 0 0 1px rgb(0 0 0 / 0.06);
 }
 
 .dark {
-  --background: var(--color-zinc-950);
-  --foreground: var(--color-zinc-100);
-  --card: color-mix(in srgb, var(--color-zinc-900) 80%, var(--color-zinc-950));
-  --card-foreground: var(--color-zinc-100);
-  --popover: var(--color-zinc-900);
-  --popover-foreground: var(--color-zinc-100);
-  --primary: var(--color-zinc-100);
-  --primary-foreground: var(--color-zinc-900);
-  --secondary: --alpha(var(--color-white) / 6%);
-  --secondary-foreground: var(--color-zinc-100);
-  --muted: --alpha(var(--color-white) / 6%);
-  --muted-foreground: var(--color-zinc-400);
-  --accent: --alpha(var(--color-white) / 6%);
-  --accent-foreground: var(--color-zinc-100);
-  --destructive: var(--color-red-500);
-  --destructive-foreground: var(--color-red-400);
-  --info: var(--color-blue-500);
-  --info-foreground: var(--color-blue-400);
-  --success: var(--color-emerald-500);
-  --success-foreground: var(--color-emerald-400);
-  --warning: var(--color-amber-500);
-  --warning-foreground: var(--color-amber-400);
-  --border: --alpha(var(--color-white) / 12%);
-  --input: --alpha(var(--color-white) / 12%);
-  --ring: var(--color-zinc-500);
+  --app: oklch(0.1291 0.0026 286);
+  --background: oklch(0.1781 0.002 286.2);
+  --foreground: oklch(0.9464 0.0013 286.4);
+  --fg-2: oklch(0.759 0.0085 286.2);
+  --fg-3: oklch(0.629 0.0104 286.1);
+
+  --popover: oklch(0.2011 0.0039 286);
+
+  --primary-hover: oklch(0.877 0.0041 286.3);
+  --primary-foreground: var(--background);
+
+  --warn: #e5a13a;
+  --success: #4cb782;
+  --destructive: #eb5757;
+
+  --border: oklch(0.2615 0.0055 286);
+  --line: oklch(0.2273 0.0038 286.1);
+  --input: oklch(0.2947 0.0072 286);
+  --ring: #4c8dff;
+
+  --page: oklch(0.1548 0.0021 286.2);
+  --panel: oklch(0.1962 0.002 286.2);
+  --panel-hover: oklch(0.2186 0.0039 286.1);
+  --control: oklch(0.2363 0.0057 286);
+  --control-hover: oklch(0.2702 0.0073 285.9);
+
+  --field: rgb(255 255 255 / 0.045);
+  --field-hover: rgb(255 255 255 / 0.065);
+
+  --pixel-line: rgb(255 255 255 / 0.16);
+
+  --edge-card: rgb(255 255 255 / 0.04);
+  --shadow-control: none;
+  --shadow-page: 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-pop:
+    0 20px 48px -8px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+/* Type: five UI steps and two for titles, nothing between. */
+@theme {
+  --text-2xs: 11px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 22px;
+  --text-lg: 16px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --color-app: var(--app);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-field: var(--field);
+  --color-field-hover: var(--field-hover);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-warn: var(--warn);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-line: var(--line);
+  --color-seam: var(--seam);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-panel-hover: var(--panel-hover);
+  --color-control: var(--control);
+  --color-control-hover: var(--control-hover);
+
+  /* Radii, by what a thing is. */
+  --radius-sm: var(--round-sm);
+  --radius-md: var(--round-md);
+  --radius-lg: var(--round-lg);
+  --radius-xl: var(--round-card);
+  --radius-3xl: var(--round-dialog);
+  --radius-menu: var(--round-menu);
+  --radius-control: var(--round-control);
+  --radius-segment: max(0px, calc(var(--round-control) - var(--spacing) * 0.5));
+
+  --shadow-control: var(--shadow-control);
+  --shadow-page: var(--shadow-page);
+  --shadow-edge: var(--shadow-edge);
+  --shadow-pop: var(--shadow-pop);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-none;
   }
+
+  /* Tailwind v4 leaves buttons on the arrow cursor; ours point. Utilities
+   * such as the menus' cursor-default still win. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  html {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    @apply bg-app font-sans text-sm text-foreground;
+    font-feature-settings: "ss01", "cv11";
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }
 
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
+  ::selection {
+    background: color-mix(in srgb, var(--ring) 28%, transparent);
   }
 
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--ring) 75%, transparent);
+    outline-offset: 2px;
   }
 
-  ::-webkit-scrollbar-corner {
-    background: transparent;
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--input) transparent;
   }
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/40 rounded-md;
+  /* Someone who asked for less motion gets the end state at once. A spinner
+   * still turns: it is the only sign that something is happening. */
+  @media (prefers-reduced-motion: reduce) {
+    *:not(.animate-spin),
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/60;
+}
+
+/*
+ * A card's edge: a real border, so a hovered row or a sticky header cannot
+ * paint over it.
+ */
+@utility edge-card {
+  border: var(--edge-width) solid var(--edge-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Keyboard hint: a small keycap with a slightly heavier bottom edge. */
+@utility kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border: 1px solid var(--border);
+  border-bottom-color: var(--input);
+  border-radius: var(--round-sm);
+  background: color-mix(in srgb, var(--fg-3) 6%, transparent);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--fg-2);
+}
+
+/* Shows through wherever the mark is transparent. */
+@utility checker {
+  background: repeating-conic-gradient(
+      color-mix(in srgb, var(--fg-3) 22%, transparent) 0% 25%,
+      transparent 0% 50%
+    )
+    50% / 12px 12px;
+}
+
+/* Overlays one line per source pixel on a magnified render. */
+@utility pixel-grid {
+  position: relative;
+  line-height: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--pixel-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--pixel-line) 1px, transparent 1px);
+    background-size: var(--cell) var(--cell);
   }
-  ::-webkit-scrollbar-thumb:active {
-    @apply bg-muted-foreground/80;
+}
+
+/* A native colour input reduced to the swatch at the head of its field. */
+@utility swatch-input {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  &::-webkit-color-swatch {
+    border: var(--edge-width) solid var(--edge-card);
+    border-radius: var(--round-sm);
+  }
+  &::-moz-color-swatch {
+    border: var(--edge-width) solid var(--edge-card);
+    border-radius: var(--round-sm);
+  }
+}
+
+/*
+ * Toasts sit above the dock's footer, or a "copied" toast over Download
+ * would swallow the next click.
+ */
+@media (width >= 64rem) {
+  :root:has([data-slot="dock-footer"]) [data-slot="toast-viewport"] {
+    bottom: calc(var(--toast-inset) + 2.75rem);
+  }
+}
+
+/*
+ * On a phone the title row has room for the title and one labelled action.
+ * The main action keeps its words; the others show their icon alone. The
+ * words stay in the page for screen readers.
+ */
+@media (width < 40rem) {
+  [data-slot="page-actions"]
+    [data-slot="button"]:not([data-variant="default"]):has(> svg) {
+    gap: 0;
+    width: calc(var(--spacing) * 6.5);
+    padding-inline: 0;
+    font-size: 0;
   }
 }
