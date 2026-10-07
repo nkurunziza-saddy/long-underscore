@@ -16,12 +16,13 @@ import {
 import { fetchSubsetFont } from "../../lib/font-loader";
 import { FONT_WEIGHT_NAMES, FONTS, getFont } from "../../lib/fonts";
 import { HALFTONE_PRESETS, HALFTONE_SHAPES } from "../../lib/halftone";
+import { searchIcons } from "../../lib/icons";
 import { buildKit } from "../../lib/kit";
 import { buildMarkSvg } from "../../lib/mark-svg";
 import { type MarkAssets, measureText } from "../../lib/render-mark";
 import { encodeDesign, sanitizeDesign } from "../../lib/share";
 import { dominantColor, type SvgSource } from "../../lib/svg-source";
-import { loadAssets, loadIcons } from "./assets";
+import { loadAssets, loadIcons, loadIconWords } from "./assets";
 import {
   describeFlags,
   designFromFlags,
@@ -72,7 +73,7 @@ Examples
   long-underscore build --name Northwind --url northwind.app \\
     --description "Invoices and payouts for small teams."
   long-underscore build --name Northwind --halftone halftone --hue slate
-  long-underscore build --name Northwind --icon zap --hue obsidian --treatment ink
+  long-underscore build --name Northwind --icon rocket --icon-weight fill
   long-underscore build --from "${STUDIO}/#d=…"
   long-underscore check --name Northwind --letter Nw --json
 `;
@@ -83,7 +84,7 @@ function describe(design: Design): string {
     design.source === "letter"
       ? `letter “${design.text}” in ${getFont(design.font).name} ${FONT_WEIGHT_NAMES[design.weight] ?? design.weight}`
       : design.source === "icon"
-        ? `icon ${design.icon}`
+        ? `icon ${design.icon}, ${design.iconWeight}`
         : design.source === "halftone"
           ? `${design.htShape === "letter" ? `letter “${design.text}”` : design.htShape} halftone`
           : "your SVG";
@@ -159,15 +160,14 @@ async function prepare(flags: Flags): Promise<Prepared> {
   }
 
   let assets = await loadAssets(design, svg);
-  if (design.source === "icon" && !assets.iconNodes) {
-    const names = Object.keys(await loadIcons());
-    const close = names
-      .filter((name) =>
-        design.icon.split("-").some((part) => name.includes(part)),
-      )
-      .slice(0, 8);
+  if (design.source === "icon" && !assets.iconPaths) {
+    const close = searchIcons(
+      Object.keys(await loadIcons("regular")),
+      await loadIconWords(),
+      design.icon.replace(/-/g, " "),
+    ).slice(0, 8);
     throw new UsageError(
-      `--icon "${design.icon}" is not a Lucide icon.${close.length > 0 ? ` Close: ${close.join(", ")}.` : ""} Search with: list icons <word>.`,
+      `--icon "${design.icon}" is not a Phosphor icon.${close.length > 0 ? ` Close: ${close.join(", ")}.` : ""} Search with: list icons <word>.`,
     );
   }
 
@@ -375,16 +375,11 @@ async function list(
     fonts: () =>
       FONTS.map((font) => [font.value, font.category, font.weights.join(" ")]),
     icons: async () =>
-      Object.keys(await loadIcons())
-        .filter(
-          (name) =>
-            !word ||
-            word
-              .toLowerCase()
-              .split(/\s+/)
-              .every((part) => name.includes(part)),
-        )
-        .map((name) => [name]),
+      searchIcons(
+        Object.keys(await loadIcons("regular")),
+        await loadIconWords(),
+        word ?? "",
+      ).map((name) => [name]),
     shapes: () => HALFTONE_SHAPES.map((shape) => [shape.value]),
     presets: () =>
       HALFTONE_PRESETS.map(({ name, halftone }) => [
@@ -416,7 +411,7 @@ async function list(
   }
   if (what === "icons" && rows.length === 0) {
     console.log(
-      `Nothing matches “${word}”. Lucide names are literal: try arrow, chart or heart.`,
+      `Nothing matches “${word}”. Try a plainer word: arrow, chart or heart.`,
     );
   }
 }

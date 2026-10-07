@@ -22,6 +22,7 @@ export interface StudioAssets extends MarkAssets {
 export function useMarkAssets(): StudioAssets {
   const source = useStudio((state) => state.design.source);
   const icon = useStudio((state) => state.design.icon);
+  const iconWeight = useStudio((state) => state.design.iconWeight);
   const font = useStudio((state) => state.design.font);
   const weight = useStudio((state) => state.design.weight);
   const text = useStudio((state) => state.design.text);
@@ -35,14 +36,16 @@ export function useMarkAssets(): StudioAssets {
   );
 
   const [iconSet, setIconSet] = useState<IconSet>(FALLBACK_ICONS);
+  // Until a weight has loaded the icon keeps the weight it had, which is
+  // nearer the truth than the fallback's.
   useEffect(() => {
     if (source !== "icon") return;
     let live = true;
-    loadIconSet().then((set) => live && setIconSet(set));
+    loadIconSet(iconWeight).then((set) => live && setIconSet(set));
     return () => {
       live = false;
     };
-  }, [source]);
+  }, [source, iconWeight]);
 
   const svg = useMemo(() => parseSvg(svgSource), [svgSource]);
   const [svgImage, setSvgImage] = useState<HTMLImageElement | null>(null);
@@ -80,7 +83,7 @@ export function useMarkAssets(): StudioAssets {
 
   return useMemo(
     () => ({
-      iconNodes: iconSet[icon] ?? null,
+      iconPaths: iconSet[icon] ?? null,
       svg,
       svgImage,
       mask,

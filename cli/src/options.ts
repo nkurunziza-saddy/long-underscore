@@ -19,6 +19,7 @@ import {
   HALFTONE_PRESETS,
   HALFTONE_SHAPES,
 } from "../../lib/halftone";
+import { ICON_WEIGHTS } from "../../lib/icons";
 import { decodeDesign, sanitizeDesign } from "../../lib/share";
 
 /** A mistake in how the command was written: said plainly, with what would work. */
@@ -38,8 +39,8 @@ const DESIGN_FLAGS = {
   letter: "Mark: one or two characters (default: the name's initial)",
   font: "Typeface id (see: list fonts)",
   weight: "Font weight, such as 700",
-  icon: "Mark: a Lucide icon by name (see: list icons <word>)",
-  stroke: "Icon stroke width, 1 to 3",
+  icon: "Mark: a Phosphor icon by name (see: list icons <word>)",
+  "icon-weight": "Icon weight: thin, light, regular, bold, fill or duotone",
   halftone: "Mark: a halftone, from a preset (see: list presets)",
   shape: "Halftone shape (see: list shapes)",
   draw: "Halftone drawn as: fill, outline or cutout",
@@ -209,8 +210,16 @@ export function designFromFlags(flags: Flags): Design {
     if (initial) set("text", initial);
   }
   if (flags.icon !== undefined) set("icon", flags.icon.toLowerCase());
-  if (flags.stroke !== undefined) set("stroke", number("stroke", flags.stroke));
-
+  if (flags["icon-weight"] !== undefined) {
+    set(
+      "iconWeight",
+      oneOf(
+        "icon-weight",
+        flags["icon-weight"],
+        ICON_WEIGHTS.map((weight) => weight.value),
+      ),
+    );
+  }
   if (flags.font !== undefined) {
     set(
       "font",

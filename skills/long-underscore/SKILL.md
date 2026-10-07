@@ -52,9 +52,13 @@ In this order:
   cells, for a product with no letter worth using. `list presets` names
   them. `--shape letter --grid 8` screens the site's own letter through
   the grid.
-- **An icon** (`--icon rocket`): a Lucide icon by name. Search with
-  `list icons <word>`. Use one only when it says something about the
-  product; a generic icon is a worse mark than a letter.
+- **An icon** (`--icon rocket`): a Phosphor icon by name, in one of six
+  weights (`--icon-weight bold` is the default and the one that survives
+  16 pixels; `fill` and `duotone` are the others worth trying). Search
+  with `list icons <word>`, which also finds an icon by what it shows:
+  `list icons power` finds `lightning`. Use an icon only when it says
+  something about the product; a generic one is a worse mark than a
+  letter.
 
 ## Commands
 

@@ -10,6 +10,7 @@ import {
   type HalftoneMode,
   type HalftoneShape,
 } from "./halftone";
+import { FALLBACK_ICON, type IconWeight } from "./icons";
 import { colorPalettes } from "./palettes";
 
 export type MarkSource = "letter" | "icon" | "halftone" | "svg";
@@ -42,8 +43,8 @@ export interface Design {
   scale: number;
   /** 0 is a square, 100 a circle. */
   radius: number;
-  /** Icon stroke width in Lucide's 24px grid. */
-  stroke: number;
+  /** Which of Phosphor's weights the icon is drawn in. */
+  iconWeight: IconWeight;
   /** The halftone mark: what its cells add up to, and which of them are drawn. */
   htShape: HalftoneShape;
   htMode: HalftoneMode;
@@ -247,12 +248,13 @@ export function withHalftone(halftone: Halftone): Pick<Design, HalftoneFields> {
 export const DEFAULT_DESIGN: Design = {
   source: "letter",
   text: "S",
-  icon: "zap",
+  icon: FALLBACK_ICON,
   font: "poppins",
   weight: 700,
   scale: 64,
   radius: 44,
-  stroke: 2,
+  // Bold is the weight whose strokes are still there at 16 pixels.
+  iconWeight: "bold",
   ...withHalftone(HALFTONE_PRESETS[0].halftone),
   // A dark neutral: the look a mark is least likely to regret.
   ...applyTreatment("obsidian", "ink"),

@@ -9,12 +9,19 @@ import {
 } from "./design";
 import { getCSSFontFamily } from "./fonts";
 import { type CellMask, halftonePath } from "./halftone";
-import { FALLBACK_ICONS, type IconNode, strokeIcon } from "./icons";
+import {
+  FALLBACK_ICON,
+  FALLBACK_ICONS,
+  fillIcon,
+  ICON_BOX,
+  type IconPath,
+} from "./icons";
 import type { SvgSource } from "./svg-source";
 
 /** Things a mark needs that are loaded asynchronously. */
 export interface MarkAssets {
-  iconNodes: IconNode[] | null;
+  /** The icon's shapes in the design's weight, once its set has loaded. */
+  iconPaths: IconPath[] | null;
   svg: SvgSource | null;
   svgImage: HTMLImageElement | null;
   /** The cells the letter covers, when the mark is a letter in halftone. */
@@ -22,7 +29,7 @@ export interface MarkAssets {
 }
 
 export const NO_ASSETS: MarkAssets = {
-  iconNodes: null,
+  iconPaths: null,
   svg: null,
   svgImage: null,
   mask: null,
@@ -118,11 +125,11 @@ export function drawGlyph(
       ctx.fillText(design.text, cx + layout.dx * box, cy + layout.dy * box);
     }
   } else if (design.source === "icon") {
-    const nodes = assets.iconNodes ?? FALLBACK_ICONS.zap;
-    const unit = ((design.scale / 100) * box) / 24;
-    ctx.translate(cx - 12 * unit, cy - 12 * unit);
+    const paths = assets.iconPaths ?? FALLBACK_ICONS[FALLBACK_ICON];
+    const unit = ((design.scale / 100) * box) / ICON_BOX;
+    ctx.translate(cx - (ICON_BOX / 2) * unit, cy - (ICON_BOX / 2) * unit);
     ctx.scale(unit, unit);
-    strokeIcon(ctx, nodes, color, design.stroke);
+    fillIcon(ctx, paths, color);
   } else if (design.source === "halftone") {
     // The same path the SVG export writes, so the two agree exactly.
     const side = (design.scale / 100) * box;

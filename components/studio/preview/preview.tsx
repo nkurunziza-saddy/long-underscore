@@ -29,12 +29,12 @@ export function Preview() {
         <p>
           Icons by{" "}
           <a
-            href="https://lucide.dev"
+            href="https://phosphoricons.com"
             target="_blank"
             rel="noreferrer"
             className={linkClass}
           >
-            Lucide
+            Phosphor
           </a>
           , type by{" "}
           <a

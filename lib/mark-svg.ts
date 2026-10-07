@@ -6,7 +6,7 @@ import {
 } from "./design";
 import { getCSSFontFamily } from "./fonts";
 import { halftonePath } from "./halftone";
-import { FALLBACK_ICONS, iconToSvg } from "./icons";
+import { FALLBACK_ICON, FALLBACK_ICONS, ICON_BOX, iconToSvg } from "./icons";
 import type { MarkAssets, TextLayout } from "./render-mark";
 
 const VIEW = 64;
@@ -45,7 +45,6 @@ export function buildMarkSvg(
   const radius = round((design.radius / 100) * (VIEW / 2));
   const half = VIEW / 2;
 
-  const glyphPaint = design.source === "icon" ? "stroke" : "fill";
   const rules = (colors: typeof light) => {
     const out: string[] = [];
     if (hasPlate) {
@@ -57,7 +56,7 @@ export function buildMarkSvg(
       }
     }
     if (design.source !== "svg") {
-      out.push(`.g{${glyphPaint}:${colors.fg};color:${colors.fg}}`);
+      out.push(`.g{fill:${colors.fg};color:${colors.fg}}`);
     }
     return out.join("");
   };
@@ -86,10 +85,11 @@ export function buildMarkSvg(
       : `y="${half}" dominant-baseline="central"`;
     glyph = `<text class="g" x="${x}" ${position} font-family="${escapeXml(family)}" font-size="${size}" font-weight="${design.weight}" text-anchor="middle">${escapeXml(design.text)}</text>`;
   } else if (design.source === "icon") {
-    const nodes = assets.iconNodes ?? FALLBACK_ICONS.zap;
-    const unit = ((design.scale / 100) * VIEW) / 24;
-    const offset = round(half - 12 * unit);
-    glyph = `<g class="g" fill="none" stroke-width="${design.stroke}" stroke-linecap="round" stroke-linejoin="round" transform="translate(${offset} ${offset}) scale(${round(unit)})">${iconToSvg(nodes)}</g>`;
+    const paths = assets.iconPaths ?? FALLBACK_ICONS[FALLBACK_ICON];
+    const unit = ((design.scale / 100) * VIEW) / ICON_BOX;
+    const offset = round(half - (ICON_BOX / 2) * unit);
+    // Four decimals: a unit of the icon's box is a small part of one of ours.
+    glyph = `<g class="g" transform="translate(${offset} ${offset}) scale(${Math.round(unit * 10000) / 10000})">${iconToSvg(paths)}</g>`;
   } else if (design.source === "halftone") {
     const side = (design.scale / 100) * VIEW;
     const offset = half - side / 2;

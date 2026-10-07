@@ -9,6 +9,7 @@ import {
   HALFTONE_MODES,
   HALFTONE_SHAPES,
 } from "./halftone";
+import { ICON_WEIGHTS } from "./icons";
 
 const HASH_KEY = "d";
 
@@ -52,6 +53,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 const ENUMS: { [K in keyof Design]?: readonly Design[K][] } = {
   source: ["letter", "icon", "halftone", "svg"],
+  iconWeight: ICON_WEIGHTS.map((weight) => weight.value),
   htShape: HALFTONE_SHAPES.map((shape) => shape.value),
   htMode: HALFTONE_MODES.map((mode) => mode.value),
   htCell: HALFTONE_CELLS.map((cell) => cell.value),
@@ -100,7 +102,6 @@ export function sanitizeDesign(input: unknown): Design {
 
   design.scale = clamp(Math.round(design.scale), 20, 100);
   design.radius = clamp(Math.round(design.radius), 0, 100);
-  design.stroke = clamp(design.stroke, 1, 3);
   design.htGrid = clamp(
     Math.round(design.htGrid),
     HALFTONE_GRID.min,

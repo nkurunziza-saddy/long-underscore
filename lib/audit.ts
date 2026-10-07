@@ -182,14 +182,17 @@ export function audit(design: Design, svg: SvgSource | null): Check[] {
     }
   }
 
-  if (design.source === "icon" && design.stroke < 1.75) {
+  if (
+    design.source === "icon" &&
+    (design.iconWeight === "thin" || design.iconWeight === "light")
+  ) {
     checks.push({
       id: "weight",
       level: "warn",
-      title: "Hairline icon stroke",
+      title: "Hairline icon strokes",
       detail:
-        "Below 2 units the lines drop under one pixel at 16px and fade out.",
-      fix: { label: "Use 2", patch: { stroke: 2 } },
+        "Thin and light strokes drop under one pixel at 16px and fade out. Bold is drawn for this size.",
+      fix: { label: "Use bold", patch: { iconWeight: "bold" } },
     });
   }
 

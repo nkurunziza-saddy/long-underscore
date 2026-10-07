@@ -26,7 +26,7 @@ studio's own.
 | `list <what>` | `hues`, `treatments`, `fonts`, `icons`, `shapes`, `presets`, `layouts`, `tones`, `textures` |
 
 `long-underscore --help` lists every flag. A mark is a letter (the
-default), a Lucide icon (`--icon`), a halftone (`--halftone`) or your own
+default), a Phosphor icon (`--icon`), a halftone (`--halftone`) or your own
 SVG (`--svg`); colour is a hue and a treatment (`--hue slate --treatment
 ink`) or exact (`--fg`, `--bg`). `--from` starts from a link shared from
 the studio, `--json` prints the result for a program to read, and

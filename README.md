@@ -2,7 +2,7 @@
 
 One mark, every surface it has to live on.
 
-Design a mark once (a letter, a Lucide icon, or your own SVG) and see it
+Design a mark once (a letter, a Phosphor icon, a halftone, or your own SVG) and see it
 where it will actually appear: a browser tab on light and dark chrome, a
 16px pixel loupe, an iOS and an Android home screen, a search result and a
 link preview. Then export a small, correct kit instead of a folder of sixty
@@ -86,7 +86,7 @@ bun dev
 | --- | --- |
 | `bun run lint` | Biome check |
 | `bun run build` | Production build |
-| `bun run icons` | Regenerate `public/lucide.json` from the installed `lucide-react` |
+| `bun run icons` | Regenerate `public/phosphor/` from the installed `@phosphor-icons/core` |
 | `bun run fonts:check` | Verify every font in `lib/fonts.ts` still resolves on Google Fonts |
 | `bun run brand` | Rebuild the studio's own icons and social card from `lib/brand.ts` |
 | `bun run cli -- build …` | Run the command line from source |

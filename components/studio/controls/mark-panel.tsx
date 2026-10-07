@@ -77,20 +77,7 @@ export function MarkPanel() {
           </>
         )}
 
-        {design.source === "icon" && (
-          <>
-            <IconPicker />
-            <SliderField
-              label="Stroke"
-              value={design.stroke}
-              min={1}
-              max={3}
-              step={0.25}
-              format={(value) => value.toFixed(2)}
-              onValueChange={(stroke) => update({ stroke })}
-            />
-          </>
-        )}
+        {design.source === "icon" && <IconPicker />}
 
         {design.source === "halftone" && <HalftonePicker />}
 
